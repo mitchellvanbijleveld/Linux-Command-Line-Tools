@@ -8,6 +8,18 @@ VAR_STATISTICS_MAIL_COUNT_TOTAL=$(tree -a $VAR_SYSTEM_MAIL_DIR | grep -c $VAR_SY
 PrintStatistics(){
     echo "===== MAIL STATISTICS ====="
     echo " - The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
+    echo ""
 }
 
 PrintStatistics
+
+for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
+    echo "Processing Domain: $(basename $var_domain)..."
+    for var_email_address in "$var_domain"/*; do
+        if [ -d $var_email_address ]; then
+            echo " - $(basename "$var_email_address")@$(basename "$var_domain")"
+        fi
+    done
+    echo "Done!"
+    echo
+done
