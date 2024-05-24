@@ -1,0 +1,91 @@
+#!/bin/bash
+
+VAR_SCRIPT_DEBUG=false
+VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/^ *//; s/ \{2,\}/ /g")
+VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
+VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
+VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/$VAR_UTILITY//; s/$VAR_UTILITY_SCRIPT//; s/^ *//; s/ $//")
+
+# Check Debug
+if [[ "$@" == *"--DEBUG"* ]]; then
+    VAR_SCRIPT_DEBUG=true
+    echo "DEBUG ENABLED"
+    echo " - Script Arguments          : $@"
+    echo " - Script Argumgnets - Flags : $VAR_SCRIPT_ARGUMENTS"
+    echo " - Utility                   : $VAR_UTILITY"
+    echo " - Utility Script            : $VAR_UTILITY_SCRIPT"
+    echo " - Utility Script Arguments  : $VAR_UTILITY_SCRIPT_ARGUMENTS"
+    echo ""
+fi
+
+# Function echoDebug()
+# Prints messages if VAR_SCRIPT_DEBUG=true.
+echoDebug () {
+    if $VAR_SCRIPT_DEBUG; then
+        echo "$1"
+    fi
+}
+
+VAR_SCRIPT_REAL_PATH=$(realpath $0)
+VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
+echoDebug " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
+echoDebug " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
+echoDebug ""
+
+VAR_UTILITY_FOLDER_PATH="$VAR_SCRIPT_DIR_NAME/$VAR_UTILITY"
+VAR_UTILITY_SCRIPT_REAL_PATH="$VAR_UTILITY_FOLDER_PATH/$VAR_UTILITY_SCRIPT.sh"
+echoDebug " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
+echoDebug " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
+echoDebug ""
+
+
+# Function die_UtilityNotFound()
+# Exits the script if utility does not exist.
+die_UtilityNotFound () {
+    echo "$1"
+    echo "The bin '$(basename $0)' supports the following utilities:"
+    for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
+        if [ -d  "$var_utility_dir" ]; then
+        var_utility=$(basename $var_utility_dir)
+        echo " - $var_utility"
+        fi
+    done
+    exit 1
+}
+
+# Function die_UtilityScriptNotFound()
+# Exits the script if utility script does not exist.
+die_UtilityScriptNotFound (){
+    echo "$1"
+    echo "The utility '$VAR_UTILITY' supports the following scripts:"
+    for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
+        var_utility_script=$(basename $var_utility_script_real_path)
+        echo " - ${var_utility_script%.sh}"
+    done
+    exit 1
+}
+
+# Check if Utility is empty.
+if [[ "$VAR_UTILITY" == "" ]]; then
+    die_UtilityNotFound "No utility specified!"
+fi
+
+# Check if Utility exists.
+if ! [ -d "$VAR_UTILITY_FOLDER_PATH" ]; then
+    die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
+fi
+
+# Check if Utility Script is empty.
+if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
+    die_UtilityScriptNotFound "No script specified!"
+fi
+
+# Check if Utility Script exists.
+if ! [ -f "$VAR_UTILITY_SCRIPT_REAL_PATH" ]; then
+    die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
+fi
+
+# Start the utility script with arguments.
+echoDebug "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
+echoDebug "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
+"$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" "$VAR_UTILITY_SCRIPT_ARGUMENTS"
