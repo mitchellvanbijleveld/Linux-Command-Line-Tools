@@ -4,6 +4,6 @@ VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo git"
 
 echo "Updating..."
 echo ""
-git -C "$VAR_SCRIPT_INSTALL_DIR" pull
+git -C "$VAR_BIN_INSTALL_DIR" pull
 echo ""
 echo "Done"
