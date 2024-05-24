@@ -91,4 +91,4 @@ fi
 # Start the utility script with arguments.
 echoDebug "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
 echoDebug "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
-"$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" "$VAR_UTILITY_SCRIPT_ARGUMENTS"
+"$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
