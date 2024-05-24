@@ -22,7 +22,7 @@ PrintStatistics(){
     done
     echo ""
     echo "The total amount of email addresses: $VAR_STATISTICS_PROCESSED_EMAIL_ACCOUNTS"
-    for var_email_address_string in "${!VAR_STATISTICS_EMAIL_ADDRESS[@]}"; do
+    for var_email_address_string in $(for var_email_address_string in "${!VAR_STATISTICS_EMAIL_ADDRESS[@]}"; do echo "$var_email_address_string"; done | sort); do
         echo " - $var_email_address_string: ${VAR_STATISTICS_EMAIL_ADDRESS[$var_email_address_string]}"
     done
     echo ""
