@@ -31,7 +31,7 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
 
             var_statistics_string="$var_statistics_mail_count_total (Inbox: $var_statistics_mail_count_inbox, Spam: $var_statistics_mail_count_spam, Sent: $var_statistics_mail_count_sent)"
 
-            echoDebug " - $var_email_address_string: $var_statistics_mail_count_total"
+            echoDebug " - $var_email_address_string: $var_statistics_string"
             VAR_STATISTICS[$var_email_address_string]="$var_statistics_string"
         fi
     done
