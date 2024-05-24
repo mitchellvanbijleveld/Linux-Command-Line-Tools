@@ -20,7 +20,7 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
     for var_email_address in "$var_domain"/*; do
         if [ -d $var_email_address ]; then
             var_statistics_mail_count_total=$(tree -a $var_email_address | grep -c $VAR_SYSTEM_HOSTNAME)
-            var_statistics_mail_count_inbox=$(tree -a -I '.Drafts|.Sent|.Spam|' "$var_email_address/Maildir/" | grep -c $VAR_SYSTEM_HOSTNAME)
+            var_statistics_mail_count_inbox=$(tree -a -I '.Drafts|.Sent|.Spam' "$var_email_address/Maildir/" | grep -c $VAR_SYSTEM_HOSTNAME)
             var_statistics_mail_count_spam=$(tree -a "$var_email_address/Maildir/.Spam/" | grep -c $VAR_SYSTEM_HOSTNAME)
             var_statistics_mail_count_sent=$(tree -a "$var_email_address/Maildir/.Sent/" | grep -c $VAR_SYSTEM_HOSTNAME)
             echo " - $(basename "$var_email_address")@$(basename "$var_domain"): $var_statistics_mail_count_total (Inbox: $var_statistics_mail_count_inbox, Spam: $var_statistics_mail_count_spam, Sent: $var_statistics_mail_count_sent)"
