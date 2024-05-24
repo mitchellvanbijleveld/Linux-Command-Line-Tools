@@ -1,5 +1,5 @@
 #!/bin/bash
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo grep hostname tree"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo grep hostname tree sort"
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
