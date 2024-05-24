@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VAR_SCRIPT_DEBUG=false
+export VAR_SCRIPT_DEBUG=false
 VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/^ *//; s/ \{2,\}/ /g")
 VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
 VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
@@ -8,7 +8,7 @@ VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/$VAR_UTILITY//; 
 
 # Check Debug
 if [[ "$@" == *"--DEBUG"* ]]; then
-    VAR_SCRIPT_DEBUG=true
+    export VAR_SCRIPT_DEBUG=true
     echo "DEBUG ENABLED"
     echo " - Script Arguments          : $@"
     echo " - Script Argumgnets - Flags : $VAR_SCRIPT_ARGUMENTS"
@@ -26,8 +26,11 @@ echoDebug () {
     fi
 }
 
+export -f echoDebug
+
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
 VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
+export VAR_BIN_INSTALL_DIR=$VAR_SCRIPT_DIR_NAME
 echoDebug " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
 echoDebug " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
 echoDebug ""
