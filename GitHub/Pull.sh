@@ -8,7 +8,7 @@ VAR_SYSTEM_CURRENT_DIR=$(pwd)
 VAR_SYSTEM_CURRENT_USER=$(/usr/bin/whoami)
 
 if ! [ -f "$VAR_SCRIPT_CONFIG_FILE" ]; then
-    echo "File with repositories does not exist. Exiting..."
+    echoInfo "File with repositories does not exist. Exiting..."
     exit 1
 fi
 
@@ -21,7 +21,7 @@ while IFS= read -r var_repository_line; do
     var_repository_user=""
     var_repository_directory=""
 
-    echo "Processing Line : $var_repository_line"
+    echoInfo "Processing Line : $var_repository_line"
 
     # Check if we can assume the first part is the username...
     if [[ "$(echo "$var_repository_line" | awk '{print $1}')" =~ ^[a-zA-Z0-9]+$ ]]; then
@@ -37,22 +37,22 @@ while IFS= read -r var_repository_line; do
 
     # Check if user is set and if the user exists on the system
     if ! [[ "$var_repository_user" = "" ]] && ! id "$var_repository_user" &>/dev/null; then
-        echo "User '$var_repository_user' does not exist on the system. Skipping..."
-        echo ""
+        echoInfo "User '$var_repository_user' does not exist on the system. Skipping..."
+        echoInfo ""
         continue
     fi
 
     # Check if directory exists
     if ! [ -d "$var_repository_directory" ]; then
-        echo "Folder '$var_repository_directory' does not exist..."
-        echo ""
+        echoInfo "Folder '$var_repository_directory' does not exist..."
+        echoInfo ""
         continue
     fi
 
     # Check if repository directory contains a '.git' directory
     if ! [ -d "$var_repository_directory/.git" ]; then
-        echo "Not a valid Git Repository (no '.git' direcotry detected in '$var_repository_directory')..."
-        echo ""
+        echoInfo "Not a valid Git Repository (no '.git' direcotry detected in '$var_repository_directory')..."
+        echoInfo ""
         continue
     fi
 
@@ -64,5 +64,5 @@ while IFS= read -r var_repository_line; do
         sudo -u "$var_repository_user" git -C "$var_repository_directory" pull
     fi
 
-    echo ""
+    echoInfo ""
 done < "$VAR_SCRIPT_CONFIG_FILE"
