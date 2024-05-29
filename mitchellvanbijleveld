@@ -2,7 +2,7 @@
 
 ##### DEFAULT GLOBAL VARIABLES ###################
 export VAR_BIN_CONFIG_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
-export VAR_BIN_TEMP_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
+export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
 ##################################################
 
 export VAR_SCRIPT_DEBUG=false
