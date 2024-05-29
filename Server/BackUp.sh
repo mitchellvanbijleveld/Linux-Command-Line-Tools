@@ -65,11 +65,11 @@ CreateBackUp(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoDebug "$1"
-    echoDebug "$2"
-    echoDebug "$3"
-
     echoInfo "  - Creating back-up for '$1' in 5 seconds..."
+
+    echoDebug "    Directory to backup         - $1"
+    echoDebug "    Temporary File Path         - $2"
+    echoDebug "    Final Destination File Path - $3"
     
     #sleep 5
 
@@ -86,11 +86,11 @@ MoveBackUp(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoDebug "$1"
-    echoDebug "$2"
-    echoDebug "$3"
-
     echoInfo "  - Moving back-up for '$1' in 5 seconds..."
+
+    echoDebug "    Directory to backup         - $1"
+    echoDebug "    Temporary File Path         - $2"
+    echoDebug "    Final Destination File Path - $3"
     
     #sleep 5
 
@@ -122,11 +122,11 @@ RemoveOldBackUps(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoDebug "$1"
-    echoDebug "$2"
-    echoDebug "$3"
-
     echoInfo "  - Removing old back-up(s) for '$1' in 5 seconds..."
+
+    echoDebug "    Directory to backup         - $1"
+    echoDebug "    Temporary File Path         - $2"
+    echoDebug "    Final Destination File Path - $3"
     
     #sleep 5
 
