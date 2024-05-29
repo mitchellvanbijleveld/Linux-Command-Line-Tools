@@ -6,13 +6,15 @@ VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)
 
 VAR_STATISTICS_MAIL_COUNT_TOTAL=$(tree -a $VAR_SYSTEM_MAIL_DIR | grep -c $VAR_SYSTEM_HOSTNAME)
-VAR_STATISTICS_PROCESSED_EMAIL_ACCOUNTS=0
+
+VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
+"$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
+"$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR"
 
 declare -A VAR_STATISTICS
 VAR_STATISTICS["INBOX"]=0
 VAR_STATISTICS["SPAM"]=0
 VAR_STATISTICS["SENT"]=0
-declare -A VAR_STATISTICS_EMAIL_ADDRESS
 
 declare -A VAR_STATISTICS_MAIL_PER_DATE_INBOX
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM
@@ -25,9 +27,14 @@ PrintStatistics(){
         echo " - $var_mail_box_count: ${VAR_STATISTICS[$var_mail_box_count]}"
     done
     echo ""
-    echo "The total amount of email addresses: $VAR_STATISTICS_PROCESSED_EMAIL_ACCOUNTS"
-    for var_email_address_string in $(for var_email_address_string in "${!VAR_STATISTICS_EMAIL_ADDRESS[@]}"; do echo "$var_email_address_string"; done | sort); do
-        echo " - $var_email_address_string: ${VAR_STATISTICS_EMAIL_ADDRESS[$var_email_address_string]}"
+    echo "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
+    for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
+        string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
+        string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
+        string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
+        string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
+        echo " - $(basename $var_email_address_string_file_path): "
+        echo "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done
     echo ""
     echo "Mail Per Date:"
@@ -43,7 +50,22 @@ PrintStatistics(){
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         echo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
     done
-    echo
+    echo ""
+}
+
+WriteStatistics(){
+    # $1 = email address
+    # $2 = count total
+    # $3 = count inbox
+    # $4 = count spam
+    # $5 = count sent
+
+    "$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR/$1"
+
+    echo "$2" > "$VAR_SCRIPT_STATISTICS_DIR/$1/total"
+    echo "$3" > "$VAR_SCRIPT_STATISTICS_DIR/$1/inbox"
+    echo "$4" > "$VAR_SCRIPT_STATISTICS_DIR/$1/spam"
+    echo "$5" > "$VAR_SCRIPT_STATISTICS_DIR/$1/sent"
 
 }
 
@@ -52,7 +74,6 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
     for var_email_address in "$var_domain"/*; do
         if [ -d $var_email_address ]; then
             var_email_address_string=$(basename "$var_email_address")@$(basename "$var_domain")
-            ((VAR_STATISTICS_PROCESSED_EMAIL_ACCOUNTS+=1))
 
             var_statistics_mail_count_total=$(tree -a $var_email_address | grep -c $VAR_SYSTEM_HOSTNAME)
             var_statistics_mail_count_inbox=$(tree -a -I '.Drafts|.Sent|.Spam' "$var_email_address/Maildir/" | grep -c $VAR_SYSTEM_HOSTNAME)
@@ -75,10 +96,11 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
                     ((VAR_STATISTICS_MAIL_PER_DATE_INBOX["$date"]--))
             done < <(find "$var_email_address/Maildir/.Sent/" -type f -iname "*$VAR_SYSTEM_HOSTNAME*" -printf '%TY-%Tm-%Td\n')
 
-            var_statistics_string="$var_statistics_mail_count_total (Inbox: $var_statistics_mail_count_inbox, Spam: $var_statistics_mail_count_spam, Sent: $var_statistics_mail_count_sent)"
+            echoDebug " - $var_email_address_string $var_statistics_mail_count_total $var_statistics_mail_count_inbox $var_statistics_mail_count_spam $var_statistics_mail_count_sent"
 
-            echoDebug " - $var_email_address_string: $var_statistics_string"
-            VAR_STATISTICS_EMAIL_ADDRESS[$var_email_address_string]="$var_statistics_string"
+            # Write statistics to file
+            WriteStatistics "$var_email_address_string" "$var_statistics_mail_count_total" "$var_statistics_mail_count_inbox" "$var_statistics_mail_count_spam" "$var_statistics_mail_count_sent"
+
         fi
     done
     echoDebug "Done!"
