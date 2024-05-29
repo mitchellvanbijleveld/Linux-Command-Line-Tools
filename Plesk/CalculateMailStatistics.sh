@@ -21,36 +21,36 @@ declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT
 
 PrintStatistics(){
-    echo "===== MAIL STATISTICS ====="
-    echo "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
+    echoInfo "===== MAIL STATISTICS ====="
+    echoInfo "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
     for var_mail_box_count in "${!VAR_STATISTICS[@]}"; do
-        echo " - $var_mail_box_count: ${VAR_STATISTICS[$var_mail_box_count]}"
+        echoInfo " - $var_mail_box_count: ${VAR_STATISTICS[$var_mail_box_count]}"
     done
-    echo ""
-    echo "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
+    echoInfo ""
+    echoInfo "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
     for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
         string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
         string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
         string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
         string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
-        echo " - $(basename $var_email_address_string_file_path): "
-        echo "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+        echoInfo " - $(basename $var_email_address_string_file_path): "
+        echoInfo "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done
-    echo ""
-    echo "Mail Per Date:"
-    echo " - Inbox"
+    echoInfo ""
+    echoInfo "Mail Per Date:"
+    echoInfo " - Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
-        echo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
+        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
     done
-    echo " - Spam"
+    echoInfo " - Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
-        echo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
+        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
     done
-    echo " - Sent"
+    echoInfo " - Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
-        echo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
+        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
     done
-    echo ""
+    echoInfo ""
 }
 
 WriteStatistics(){
