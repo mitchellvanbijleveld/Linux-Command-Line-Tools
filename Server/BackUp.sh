@@ -45,14 +45,16 @@ createBackUp_PreCheck(){
     if [ -e "$2" ]; then
         echoInfo "Temporary back-up file with this name already exists: '$2'. Skipping..."
         echoInfo ""
-        continue
+        return 99
     fi
 
     if [ -e "$3" ]; then
         echoInfo "Final back-up file with this name already exists: '$3'. Skipping..."
         echoInfo ""
-        continue
+        return 99
     fi
+
+    return 0
 
 }
 
@@ -72,6 +74,8 @@ CreateBackUp(){
     #sleep 5
 
     "$(which tar)" --use-compress-program=zstd -cvf "$2" "$1" &> /dev/null
+
+    return 0
 
 }
 
@@ -95,7 +99,7 @@ MoveBackUp(){
     if [ ! -e "$2" ] || [ ! -e "$3" ]; then
         echoInfo "    One of two back-up files not existing for '$1'. Aborting this back-up..."
         echoInfo ""
-        continue
+        return 99
     fi
 
     if [ $(shasum "$2" | awk '{print $1}') == $(shasum "$3" | awk '{print $1}') ]; then
@@ -104,8 +108,10 @@ MoveBackUp(){
     else
         echoInfo "    Checksum mismatch for '$1'. Aborting this back-up..."
         echoInfo ""
-        continue
+        return 99
     fi
+
+    return 0
 
 }
 
@@ -183,18 +189,25 @@ while IFS= read -r var_directory_line; do
 
     # Create back-up pre check
 
-    createBackUp_PreCheck "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"
+    if ! createBackUp_PreCheck "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"; then
+        continue
+    fi
 
     echoInfo "Ready to create back-up for '$var_directory_line'!"
 
     # Create back-up
-    CreateBackUp "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"
+    if ! CreateBackUp "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"; then
+        continue
+    fi
 
     # Move back-up
-    MoveBackUp "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"
-
+    if ! MoveBackUp "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"; then
+        continue
+    fi
     # Remove old back-up(s)
-    RemoveOldBackUps "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"
+    if ! RemoveOldBackUps "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"; then
+        continue
+    fi
 
     echoInfo "Done!"
 
