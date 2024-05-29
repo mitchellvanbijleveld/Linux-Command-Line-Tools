@@ -27,11 +27,23 @@ fi
 # Prints messages if VAR_SCRIPT_DEBUG=true.
 echoDebug () {
     if $VAR_SCRIPT_DEBUG; then
-        echo "$1"
+        echo $(date +"%Y-%m-%d %H:%M:%S") "[DEBUG]" ":" "$1"
     fi
 }
 
 export -f echoDebug
+
+# Function echoInfo()
+# Prints messages if VAR_SCRIPT_DEBUG=true.
+echoInfo () {
+    if $VAR_SCRIPT_DEBUG; then
+        echo $(date +"%Y-%m-%d %H:%M:%S") "[ INFO]" ":" "$1"
+    else
+        echo "$1"
+    fi
+}
+
+export -f echoInfo
 
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
 VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
@@ -50,12 +62,12 @@ echoDebug ""
 # Function die_UtilityNotFound()
 # Exits the script if utility does not exist.
 die_UtilityNotFound () {
-    echo "$1"
-    echo "The bin '$(basename $0)' supports the following utilities:"
+    echoInfo "$1"
+    echoInfo "The bin '$(basename $0)' supports the following utilities:"
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
         if [ -d  "$var_utility_dir" ]; then
         var_utility=$(basename $var_utility_dir)
-        echo " - $var_utility"
+        echoInfo " - $var_utility"
         fi
     done
     exit 1
@@ -64,11 +76,11 @@ die_UtilityNotFound () {
 # Function die_UtilityScriptNotFound()
 # Exits the script if utility script does not exist.
 die_UtilityScriptNotFound (){
-    echo "$1"
-    echo "The utility '$VAR_UTILITY' supports the following scripts:"
+    echoInfo "$1"
+    echoInfo "The utility '$VAR_UTILITY' supports the following scripts:"
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
         var_utility_script=$(basename $var_utility_script_real_path)
-        echo " - ${var_utility_script%.sh}"
+        echoInfo " - ${var_utility_script%.sh}"
     done
     exit 1
 }
