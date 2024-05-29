@@ -2,7 +2,7 @@
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo shasum sleep tar tree" # msmtp
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
-if [[ $(which whoami) != "root" ]]; then
+if [[ $(whoami) != "root" ]]; then
     echoInfo "Only the 'root' user should execute this backup utility script. Exiting..."
     echoInfo ""
     exit 1
