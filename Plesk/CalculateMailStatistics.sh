@@ -5,6 +5,12 @@ VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname tree so
 VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)
 
+if ! [ -d "$VAR_SYSTEM_MAIL_DIR" ]; then
+    echo "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
+    echo ""
+    exit 1
+fi
+
 VAR_STATISTICS_MAIL_COUNT_TOTAL=$(tree -a $VAR_SYSTEM_MAIL_DIR | grep -c $VAR_SYSTEM_HOSTNAME)
 
 VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
