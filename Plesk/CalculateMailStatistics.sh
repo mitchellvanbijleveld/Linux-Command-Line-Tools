@@ -6,8 +6,8 @@ VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)
 
 if ! [ -d "$VAR_SYSTEM_MAIL_DIR" ]; then
-    echo "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
-    echo ""
+    echoInfo "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
+    echoInfo ""
     exit 1
 fi
 
