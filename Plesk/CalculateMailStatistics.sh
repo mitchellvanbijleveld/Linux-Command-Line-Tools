@@ -29,10 +29,10 @@ declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT
 PrintStatistics(){
     echoInfo "===== MAIL STATISTICS ====="
     echoInfo "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
-    for var_mail_box_count in "${!VAR_STATISTICS[@]}"; do
-        echoInfo " - $var_mail_box_count: ${VAR_STATISTICS[$var_mail_box_count]}"
-    done
-    echoInfo ""
+    echoInfo " - Inbox: ${VAR_STATISTICS["INBOX"]}"
+    echoInfo " - Spam: ${VAR_STATISTICS["SPAM"]}"
+    echoInfo " - SENT: ${VAR_STATISTICS["SENT"]}"
+    echoInfo
     echoInfo "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
     for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
         string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
