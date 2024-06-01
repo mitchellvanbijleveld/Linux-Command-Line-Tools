@@ -1,10 +1,13 @@
 #!/bin/bash
+VAR_UTILITY="Server"
+VAR_UTILITY_SCRIPT="BackUp"
+
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo shasum sleep tar tree" # msmtp
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 if [[ $(whoami) != "root" ]]; then
-    echoInfo "Only the 'root' user should execute this backup utility script. Exiting..."
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Only the 'root' user should execute this backup utility script. Exiting..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
     exit 1
 fi
 
@@ -16,23 +19,23 @@ VAR_BACKUP_MAX_BACKUPS=4
 VAR_BACKUP_FILE_TYPE="tar.zst"
 
 if ! [ -f "$VAR_BACKUP_FINAL_DIR" ]; then
-    echoInfo "File with destination to back-up does not exist. Exiting..."
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File with destination to back-up does not exist. Exiting..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
     exit 1
 else
     VAR_BACKUP_FINAL_DIR=$(cat "$VAR_BACKUP_FINAL_DIR")
 fi
 
 if ! [ -f "$VAR_SCRIPT_CONFIG_FILE" ]; then
-    echoInfo "File with directories to back-up does not exist. Exiting..."
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File with directories to back-up does not exist. Exiting..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
     exit 1
 else
-    echoDebug "Loading default configuration:"
-    echoDebug "VAR_BACKUP_TEMP_DIR        : $VAR_BACKUP_TEMP_DIR"
-    echoDebug "VAR_BACKUP_FINAL_DIR       : $VAR_BACKUP_FINAL_DIR"
-    echoDebug "VAR_BACKUP_MAX_BACKUPS     : $VAR_BACKUP_MAX_BACKUPS"
-    #echoDebug "VAR_BACKUP_MAX_HASH_CHECKS : $VAR_BACKUP_MAX_HASH_CHECKS"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Loading default configuration:"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_TEMP_DIR        : $VAR_BACKUP_TEMP_DIR"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_FINAL_DIR       : $VAR_BACKUP_FINAL_DIR"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_BACKUPS     : $VAR_BACKUP_MAX_BACKUPS"
+    #echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_HASH_CHECKS : $VAR_BACKUP_MAX_HASH_CHECKS"
 fi
 
 
@@ -43,14 +46,14 @@ createBackUp_PreCheck(){
     # $3 = final file path
 
     if [ -e "$2" ]; then
-        echoInfo "Temporary back-up file with this name already exists: '$2'. Skipping..."
-        echoInfo ""
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Temporary back-up file with this name already exists: '$2'. Skipping..."
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
         return 99
     fi
 
     if [ -e "$3" ]; then
-        echoInfo "Final back-up file with this name already exists: '$3'. Skipping..."
-        echoInfo ""
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Final back-up file with this name already exists: '$3'. Skipping..."
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
         return 99
     fi
 
@@ -65,11 +68,11 @@ CreateBackUp(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoInfo "  - Creating back-up for '$1' in 5 seconds..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 5 seconds..."
 
-    echoDebug "    Directory to backup         - $1"
-    echoDebug "    Temporary File Path         - $2"
-    echoDebug "    Final Destination File Path - $3"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
     #sleep 5
 
@@ -86,28 +89,28 @@ MoveBackUp(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoInfo "  - Moving back-up for '$1' in 5 seconds..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 5 seconds..."
 
-    echoDebug "    Directory to backup         - $1"
-    echoDebug "    Temporary File Path         - $2"
-    echoDebug "    Final Destination File Path - $3"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
     #sleep 5
 
     "$(which cp)" "$2" "$3"
 
     if [ ! -e "$2" ] || [ ! -e "$3" ]; then
-        echoInfo "    One of two back-up files not existing for '$1'. Aborting this back-up..."
-        echoInfo ""
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    One of two back-up files not existing for '$1'. Aborting this back-up..."
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
         return 99
     fi
 
     if [ $(shasum "$2" | awk '{print $1}') == $(shasum "$3" | awk '{print $1}') ]; then
-        echoDebug "    SHASUM OK"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    SHASUM OK"
         "$(which rm)" "$2"
     else
-        echoInfo "    Checksum mismatch for '$1'. Aborting this back-up..."
-        echoInfo ""
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Checksum mismatch for '$1'. Aborting this back-up..."
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
         return 99
     fi
 
@@ -122,11 +125,11 @@ RemoveOldBackUps(){
     # $2 = temp file path
     # $3 = final file path
 
-    echoInfo "  - Removing old back-up(s) for '$1' in 5 seconds..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 5 seconds..."
 
-    echoDebug "    Directory to backup         - $1"
-    echoDebug "    Temporary File Path         - $2"
-    echoDebug "    Final Destination File Path - $3"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
     #sleep 5
 
@@ -134,11 +137,11 @@ RemoveOldBackUps(){
         for var_directory in "$VAR_BACKUP_FINAL_DIR$1"/*; do
             for var_file in "$var_directory"/*; do
                 if [ $(tree "$var_directory" | grep -c "$VAR_BACKUP_FILE_TYPE") == 0 ]; then
-                    echoDebug "    Removing empty directory '$var_directory'..."
+                    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Removing empty directory '$var_directory'..."
                     "$(which rm)" -rf "$var_directory"
                     break 2
                 fi
-                echoDebug "    Removing back-up file '$var_file'..."
+                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Removing back-up file '$var_file'..."
                 "$(which rm)" "$var_file"
                 break 2
             done
@@ -167,8 +170,8 @@ while IFS= read -r var_directory_line; do
     echoDebug "BackUp Dir : $var_backup_directory"
 
     if ! [ -d "$var_backup_directory" ]; then
-        echoInfo "Directory '$var_backup_directory' does not exist. Skipping..."
-        echoInfo ""
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Directory '$var_backup_directory' does not exist. Skipping..."
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
         continue
     fi
 
@@ -193,7 +196,7 @@ while IFS= read -r var_directory_line; do
         continue
     fi
 
-    echoInfo "Ready to create back-up for '$var_directory_line'!"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Ready to create back-up for '$var_directory_line'!"
 
     # Create back-up
     if ! CreateBackUp "$var_backup_directory" "$var_backup_file_temp_fullpath" "$var_backup_file_final_fullpath"; then
@@ -209,11 +212,11 @@ while IFS= read -r var_directory_line; do
         continue
     fi
 
-    echoInfo "Done!"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done!"
 
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
 
 done < "$VAR_SCRIPT_CONFIG_FILE"
 
 wait
-echoInfo "Script finished successfully!"
+echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script finished successfully!"
