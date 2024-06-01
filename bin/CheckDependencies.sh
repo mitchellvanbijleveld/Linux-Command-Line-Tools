@@ -2,7 +2,6 @@
 VAR_UTILITY="bin"
 VAR_UTILITY_SCRIPT="CheckDependencies"
 
-
 echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency check has been started..."
 
 CheckDependency(){
@@ -13,6 +12,7 @@ CheckDependency(){
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency OK     : $(printf "%-10s\n" "$1")"
     else
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency NOT OK : $(printf "%-10s\n" "$1")"
+        VAR_MISSING_DEPENDENCIES="$VAR_MISSING_DEPENDENCIES$1 "
         if $2; then
             echoInfo "Dependency '$1' was not found on this system. Exiting..."
             exit 1
@@ -62,7 +62,8 @@ else
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies OK!"
         exit 0
     else
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies NOT OK!"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies NOT OK! Missing dependencies: $VAR_MISSING_DEPENDENCIES"
+        export VAR_MISSING_DEPENDENCIES
         exit 1
     fi
 fi
