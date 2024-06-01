@@ -1,4 +1,6 @@
 #!/bin/bash
+SELF_VAR_UTILITY="mitchell"
+SELF_VAR_UTILITY_SCRIPT="vanbijleveld"
 
 ##### DEFAULT GLOBAL VARIABLES ###################
 export VAR_BIN_CONFIG_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
@@ -26,8 +28,16 @@ fi
 # Function echoDebug()
 # Prints messages if VAR_SCRIPT_DEBUG=true.
 echoDebug () {
+    echo_var_utility="$1"
+    echo_var_utility_script="$2"
+    echo_var_message="$3"
+    if [[ "$3" == "" ]]; then
+        echo_var_message="$1 $2"
+        echo_var_utility=""
+        echo_var_utility_script=""
+    fi
     if $VAR_SCRIPT_DEBUG; then
-        echo $(date +"%Y-%m-%d %H:%M:%S") "[DEBUG]" ":" "$1"
+        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-25s\n" "$echo_var_utility/$echo_var_utility_script")" "[DEBUG]" ":" "$echo_var_message"
     fi
 }
 
@@ -36,10 +46,18 @@ export -f echoDebug
 # Function echoInfo()
 # Prints messages if VAR_SCRIPT_DEBUG=true.
 echoInfo () {
+    echo_var_utility="$1"
+    echo_var_utility_script="$2"
+    echo_var_message="$3"
+    if [[ "$3" == "" ]]; then
+        echo_var_message="$1 $2"
+        echo_var_utility=""
+        echo_var_utility_script=""
+    fi
     if $VAR_SCRIPT_DEBUG; then
-        echo $(date +"%Y-%m-%d %H:%M:%S") "[ INFO]" ":" "$1"
+        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-25s\n" "$echo_var_utility/$echo_var_utility_script")" "[ INFO]" ":" "$echo_var_message"
     else
-        echo "$1"
+        echo "$echo_var_message"
     fi
 }
 
@@ -48,26 +66,26 @@ export -f echoInfo
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
 VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
 export VAR_BIN_INSTALL_DIR=$VAR_SCRIPT_DIR_NAME
-echoDebug " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
-echoDebug " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
-echoDebug ""
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" ""
 
 VAR_UTILITY_FOLDER_PATH="$VAR_SCRIPT_DIR_NAME/$VAR_UTILITY"
 VAR_UTILITY_SCRIPT_REAL_PATH="$VAR_UTILITY_FOLDER_PATH/$VAR_UTILITY_SCRIPT.sh"
-echoDebug " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
-echoDebug " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
-echoDebug ""
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" ""
 
 
 # Function die_UtilityNotFound()
 # Exits the script if utility does not exist.
 die_UtilityNotFound () {
-    echoInfo "$1"
-    echoInfo "The bin '$(basename $0)' supports the following utilities:"
+    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
         if [ -d  "$var_utility_dir" ]; then
         var_utility=$(basename $var_utility_dir)
-        echoInfo " - $var_utility"
+        echoInfo "$SELF_VAR_UTILITY" "$VSELF_AR_UTILITY_SCRIPT" " - $var_utility"
         fi
     done
     exit 1
@@ -76,11 +94,11 @@ die_UtilityNotFound () {
 # Function die_UtilityScriptNotFound()
 # Exits the script if utility script does not exist.
 die_UtilityScriptNotFound (){
-    echoInfo "$1"
-    echoInfo "The utility '$VAR_UTILITY' supports the following scripts:"
+    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
         var_utility_script=$(basename $var_utility_script_real_path)
-        echoInfo " - ${var_utility_script%.sh}"
+        echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
     done
     exit 1
 }
@@ -106,6 +124,6 @@ if ! [ -f "$VAR_UTILITY_SCRIPT_REAL_PATH" ]; then
 fi
 
 # Start the utility script with arguments.
-echoDebug "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
-echoDebug "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
+echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
 "$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
