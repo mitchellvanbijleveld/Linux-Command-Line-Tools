@@ -163,11 +163,11 @@ while IFS= read -r var_directory_line; do
     fi
 
     # Print a message with the current line
-    echoDebug "Processing Line : $var_directory_line"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing Line : $var_directory_line"
 
     # Use sed to remove any leading spaces or other unwanted characters
     var_backup_directory=$(echo "$var_directory_line" | sed "s/\"//g; s/\'//g")
-    echoDebug "BackUp Dir : $var_backup_directory"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Dir : $var_backup_directory"
 
     if ! [ -d "$var_backup_directory" ]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Directory '$var_backup_directory' does not exist. Skipping..."
@@ -179,16 +179,16 @@ while IFS= read -r var_directory_line; do
     var_backup_file_dir_temp="$VAR_BACKUP_TEMP_DIR$var_backup_directory/$var_datetime_yearmonthday"
     var_backup_file_dir_final="$VAR_BACKUP_FINAL_DIR$var_backup_directory/$var_datetime_yearmonthday"
 
-    echoDebug "Creating temporary directory '$var_backup_file_dir_temp'..."
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating temporary directory '$var_backup_file_dir_temp'..."
     "$(which mkdir)" -p "$var_backup_file_dir_temp"
-    echoDebug "Creating final directory '$var_backup_file_dir_final'..."
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating final directory '$var_backup_file_dir_final'..."
     "$(which mkdir)" -p "$var_backup_file_dir_final"
 
     var_datetime_hourminute=$(date +"%H%M")
     var_backup_file_temp_fullpath="$var_backup_file_dir_temp/$var_datetime_hourminute.$VAR_BACKUP_FILE_TYPE"
     var_backup_file_final_fullpath="$var_backup_file_dir_final/$var_datetime_hourminute.$VAR_BACKUP_FILE_TYPE"
-    echoDebug "Temporary Destination : $var_backup_file_temp_fullpath"
-    echoDebug "Final Destination     : $var_backup_file_final_fullpath"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Temporary Destination : $var_backup_file_temp_fullpath"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Final Destination     : $var_backup_file_final_fullpath"
 
     # Create back-up pre check
 
