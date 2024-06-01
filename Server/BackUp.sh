@@ -47,13 +47,13 @@ createBackUp_PreCheck(){
 
     if [ -e "$2" ]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Temporary back-up file with this name already exists: '$2'. Skipping..."
-        echo
+        echoInfo
         return 99
     fi
 
     if [ -e "$3" ]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Final back-up file with this name already exists: '$3'. Skipping..."
-        echo
+        echoInfo
         return 99
     fi
 
@@ -101,7 +101,7 @@ MoveBackUp(){
 
     if [ ! -e "$2" ] || [ ! -e "$3" ]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    One of two back-up files not existing for '$1'. Aborting this back-up..."
-        echo
+        echoInfo
         return 99
     fi
 
@@ -110,7 +110,7 @@ MoveBackUp(){
         "$(which rm)" "$2"
     else
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Checksum mismatch for '$1'. Aborting this back-up..."
-        echo
+        echoInfo
         return 99
     fi
 
@@ -171,7 +171,7 @@ while IFS= read -r var_directory_line; do
 
     if ! [ -d "$var_backup_directory" ]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Directory '$var_backup_directory' does not exist. Skipping..."
-        echo
+        echoInfo
         continue
     fi
 
@@ -214,7 +214,7 @@ while IFS= read -r var_directory_line; do
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done!"
 
-    echo
+    echoInfo
 
 done < "$VAR_SCRIPT_CONFIG_FILE"
 
