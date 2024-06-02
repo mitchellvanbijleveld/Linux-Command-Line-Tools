@@ -31,7 +31,9 @@ echoDebug () {
     echo_var_utility="$1"
     echo_var_utility_script="$2"
     echo_var_message="$3"
-    if [[ "$3" == "" ]]; then
+    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && $VAR_SCRIPT_DEBUG; then
+        return 0 # stop function
+    elif [[ "$3" == "" ]]; then
         echo_var_message="$1 $2"
         echo_var_utility=""
         echo_var_utility_script=""
