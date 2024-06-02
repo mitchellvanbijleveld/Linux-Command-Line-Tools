@@ -4,6 +4,11 @@ VAR_UTILITY_SCRIPT="CheckDependencies"
 
 echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency check has been started..."
 
+if [[ "$@" == *"--install-check"* ]]; then
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script will write missing dependencies to file..."
+    InstallCheck=1
+fi
+
 CheckDependency(){
     # $1 string dependency
     # $2 bool exit
@@ -17,13 +22,13 @@ CheckDependency(){
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependency '$1' was not found on this system. Exiting..."
             exit 1
         else
-            DependencyMissing=True
+            DependencyMissing=1
         fi
     fi
 
 }
 
-if [[ "$@" ]]; then
+if [[ "$@" ]] && [[ ! $InstallCheck -eq 1 ]]; then
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Checking specified dependencies. Exiting upon failure..."
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The following dependencies will be checked: '$@'..."
 
@@ -58,10 +63,20 @@ else
         CheckDependency "$var_script_dependency" false
     done
 
-    if ! $DependencyMissing; then
+    if ! [[ $DependencyMissing -eq 1 ]]; then
+        if [[ $InstallCheck -eq 1 ]]; then
+            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies OK!"
+            exit 0
+        fi
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies OK!"
         exit 0
     else
+        if [[ $InstallCheck -eq 1 ]]; then
+            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Writing missing dependencies to file..."
+            echo "$VAR_MISSING_DEPENDENCIES" > ".mvb.missing_dependencies"
+            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(ls -al .mvb.missing_dependencies)"
+            exit 0
+        fi
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Dependencies NOT OK! Missing dependencies: $VAR_MISSING_DEPENDENCIES"
         exit 1
     fi
