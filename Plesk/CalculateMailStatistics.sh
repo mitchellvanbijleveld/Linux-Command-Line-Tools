@@ -1,5 +1,5 @@
 #!/bin/bash
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname tree sort"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
@@ -26,7 +26,7 @@ declare -A VAR_STATISTICS_MAIL_PER_DATE_INBOX
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT
 
-PrintStatistics(){
+PrintStatistics_FileSystem(){
     echoInfo "===== MAIL STATISTICS ====="
     echoInfo "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
     echoInfo " - Inbox : ${VAR_STATISTICS["INBOX"]}"
@@ -113,4 +113,28 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
     echoDebug
 done
 
-PrintStatistics
+PrintStatistics_FileSystem
+
+
+
+var_db_query_stats="SELECT * FROM stats"
+var_db_query_stats_accounts="SELECT * FROM stats_accounts"
+var_db_query_stats_daily_volume="SELECT * FROM stats_daily_volume"
+
+PrintStatistics_Database(){
+result_var_db_query_stats=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats")
+result_var_db_query_stats_accounts=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_accounts")
+result_var_db_query_stats_daily_volume=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_daily_volume")
+
+var_result_db_receivedHam=$(echo $result_var_db_query_stats | awk '{print $2}')
+var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
+var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
+
+echoInfo "===== MAIL STATISTICS FROM DATABASE ====="
+echoInfo "Received Ham  : $var_result_db_receivedHam"
+echoInfo "Received Spam : $var_result_db_receivedSpam"
+echoInfo "Sent Ham      : $var_result_db_sentHam"
+
+}
+
+PrintStatistics_Database
