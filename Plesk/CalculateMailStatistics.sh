@@ -1,4 +1,7 @@
 #!/bin/bash
+VAR_UTILITY="Plesk"
+VAR_UTILITY_SCRIPT="CalculateMailStatistics"
+
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
@@ -6,8 +9,8 @@ VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)
 
 if ! [ -d "$VAR_SYSTEM_MAIL_DIR" ]; then
-    echoInfo "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
     exit 1
 fi
 
@@ -31,36 +34,36 @@ declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT_DB
 
 PrintStatistics_FileSystem(){
-    echoInfo "===== MAIL STATISTICS ====="
-    echoInfo "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
-    echoInfo " - Inbox : ${VAR_STATISTICS["INBOX"]}"
-    echoInfo " - Spam  : ${VAR_STATISTICS["SPAM"]}"
-    echoInfo " - Sent  : ${VAR_STATISTICS["SENT"]}"
-    echoInfo
-    echoInfo "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS ====="
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox : ${VAR_STATISTICS["INBOX"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Spam  : ${VAR_STATISTICS["SPAM"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Sent  : ${VAR_STATISTICS["SENT"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
     for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
         string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
         string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
         string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
         string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
-        echoInfo " - $(basename $var_email_address_string_file_path): "
-        echoInfo "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(basename $var_email_address_string_file_path): "
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done
-    echoInfo ""
-    echoInfo "Mail Per Date:"
-    echoInfo " - Inbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
     done
-    echoInfo " - Spam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
     done
-    echoInfo " - Sent"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
     done
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
 }
 
 WriteStatistics(){
@@ -80,7 +83,7 @@ WriteStatistics(){
 }
 
 for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
-    echoDebug "Processing Domain: $(basename $var_domain)..."
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing Domain: $(basename $var_domain)..."
     for var_email_address in "$var_domain"/*; do
         if [ -d $var_email_address ]; then
             var_email_address_string=$(basename "$var_email_address")@$(basename "$var_domain")
@@ -106,15 +109,15 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
                     ((VAR_STATISTICS_MAIL_PER_DATE_INBOX["$date"]--))
             done < <(find "$var_email_address/Maildir/.Sent/" -type f -iname "*$VAR_SYSTEM_HOSTNAME*" -printf '%TY-%Tm-%Td\n')
 
-            echoDebug " - $var_email_address_string $var_statistics_mail_count_total $var_statistics_mail_count_inbox $var_statistics_mail_count_spam $var_statistics_mail_count_sent"
+            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $var_email_address_string $var_statistics_mail_count_total $var_statistics_mail_count_inbox $var_statistics_mail_count_spam $var_statistics_mail_count_sent"
 
             # Write statistics to file
             WriteStatistics "$var_email_address_string" "$var_statistics_mail_count_total" "$var_statistics_mail_count_inbox" "$var_statistics_mail_count_spam" "$var_statistics_mail_count_sent"
 
         fi
     done
-    echoDebug "Done!"
-    echoDebug
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done!"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"
 done
 
 PrintStatistics_FileSystem
@@ -140,27 +143,27 @@ PrintStatistics_Database(){
     var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
     var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
-    echoInfo "===== MAIL STATISTICS FROM DATABASE ====="
-    echoInfo "The Total Mail Count is: $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
-    echoInfo "Received Ham  : $var_result_db_receivedHam"
-    echoInfo "Received Spam : $var_result_db_receivedSpam"
-    echoInfo "Sent Ham      : $var_result_db_sentHam"
-    echoInfo
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS FROM DATABASE ====="
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Total Mail Count is: $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Received Ham  : $var_result_db_receivedHam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Received Spam : $var_result_db_receivedSpam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent Ham      : $var_result_db_sentHam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"
 
-    echoInfo "Mail Per Date:"
-    echoInfo " - Inbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}"
     done
-    echoInfo " - Spam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}"
     done
-    echoInfo " - Sent"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[@]}"; do echo "$date"; done | sort); do
-        echoInfo "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]}"
     done
-    echoInfo ""
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
 
 }
 
@@ -168,47 +171,47 @@ PrintStatistics_Database
 
 CompareStatistics(){
 
-    echoInfo "===== MAIL STATISTICS COMPARISON ====="
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
 
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
-        echoInfo "Inbox : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
-        echoInfo "Inbox : NOT OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
-        echoInfo "Spam  : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
     else
-        echoInfo "Spam  : NOT OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
-        echoInfo "Sent  : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
     else
-        echoInfo "Sent  : NOT OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : NOT OK"
     fi
-    echoInfo
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT"
 
-    echoInfo "Inbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
-            echoInfo "  $date : OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
         else
-            echoInfo "  $date : NOT OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
         fi
     done
-    echoInfo "Spam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
-            echoInfo "  $date : OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
         else
-            echoInfo "  $date : NOT OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
         fi
     done
-    echoInfo "Sent"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
-            echoInfo "  $date : OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
         else
-            echoInfo "  $date : NOT OK"
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
         fi
     done
 
