@@ -10,7 +10,7 @@ VAR_SYSTEM_HOSTNAME=$(hostname)
 
 if ! [ -d "$VAR_SYSTEM_MAIL_DIR" ]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Expected directory in '$VAR_SYSTEM_MAIL_DIR'. Exiting..."
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
     exit 1
 fi
 
@@ -49,7 +49,7 @@ PrintStatistics_FileSystem(){
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(basename $var_email_address_string_file_path): "
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
@@ -63,7 +63,7 @@ PrintStatistics_FileSystem(){
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
     done
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
 }
 
 WriteStatistics(){
@@ -163,7 +163,7 @@ PrintStatistics_Database(){
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[@]}"; do echo "$date"; done | sort); do
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]}"
     done
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
 
 }
 
