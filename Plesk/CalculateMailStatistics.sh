@@ -139,3 +139,19 @@ echoInfo "Sent Ham      : $var_result_db_sentHam"
 }
 
 PrintStatistics_Database
+
+CompareStatistics(){
+
+if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
+    echoInfo "OK : Inbox"
+fi
+if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
+    echoInfo "OK : Spam"
+fi
+if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
+    echoInfo "OK : Sent"
+fi
+
+}
+
+CompareStatistics
