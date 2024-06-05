@@ -120,28 +120,29 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
     echoDebug
 done
 
-PrintStatistics_FileSystem
-
 
 
 var_db_query_stats="SELECT * FROM stats"
 var_db_query_stats_accounts="SELECT * FROM stats_accounts"
 var_db_query_stats_daily_volume="SELECT * FROM stats_daily_volume"
 
+result_var_db_query_stats=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats")
+result_var_db_query_stats_accounts=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_accounts")
+result_var_db_query_stats_daily_volume=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_daily_volume")
+
+while IFS= read -r mail_per_date; do
+    VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $2}')"
+    VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $3}')"
+    VAR_STATISTICS_MAIL_PER_DATE_SENT_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $5}')"
+done <<< "$result_var_db_query_stats_daily_volume"
+
+var_result_db_receivedHam=$(echo $result_var_db_query_stats | awk '{print $2}')
+var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
+var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
+
+
+
 PrintStatistics_Database(){
-    result_var_db_query_stats=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats")
-    result_var_db_query_stats_accounts=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_accounts")
-    result_var_db_query_stats_daily_volume=$("$(which mysql)" -u root -D emailsecurity -Bse "$var_db_query_stats_daily_volume")
-
-    while IFS= read -r mail_per_date; do
-        VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $2}')"
-        VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $3}')"
-        VAR_STATISTICS_MAIL_PER_DATE_SENT_DB["$(echo "$mail_per_date" | awk '{print $1}')"]="$(echo "$mail_per_date" | awk '{print $5}')"
-    done <<< "$result_var_db_query_stats_daily_volume"
-
-    var_result_db_receivedHam=$(echo $result_var_db_query_stats | awk '{print $2}')
-    var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
-    var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS FROM DATABASE ====="
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Total Mail Count is: $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
@@ -167,7 +168,7 @@ PrintStatistics_Database(){
 
 }
 
-PrintStatistics_Database
+
 
 CompareStatistics(){
 
@@ -215,12 +216,13 @@ CompareStatistics(){
         fi
     done
 
-
-
-
-
-
-
 }
+
+
+
+if [[ "$@" == *"--verbose"* ]]; then
+    PrintStatistics_FileSystem
+    PrintStatistics_Database
+fi
 
 CompareStatistics
