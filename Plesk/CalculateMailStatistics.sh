@@ -185,6 +185,38 @@ CompareStatistics(){
     else
         echoInfo "Sent  : NOT OK"
     fi
+    echoInfo
+
+    echoInfo "Inbox"
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
+        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
+            echoInfo "  $date : OK"
+        else
+            echoInfo "  $date : NOT OK"
+        fi
+    done
+    echoInfo "Spam"
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
+        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
+            echoInfo "  $date : OK"
+        else
+            echoInfo "  $date : NOT OK"
+        fi
+    done
+    echoInfo "Sent"
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
+        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
+            echoInfo "  $date : OK"
+        else
+            echoInfo "  $date : NOT OK"
+        fi
+    done
+
+
+
+
+
+
 
 }
 
