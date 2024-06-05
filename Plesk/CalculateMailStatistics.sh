@@ -131,6 +131,7 @@ var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
 var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
 echoInfo "===== MAIL STATISTICS FROM DATABASE ====="
+echoInfo "The Total Mail Count is: $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
 echoInfo "Received Ham  : $var_result_db_receivedHam"
 echoInfo "Received Spam : $var_result_db_receivedSpam"
 echoInfo "Sent Ham      : $var_result_db_sentHam"
