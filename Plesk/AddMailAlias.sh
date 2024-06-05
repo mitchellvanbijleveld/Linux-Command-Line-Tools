@@ -1,4 +1,7 @@
 #!/bin/bash
+VAR_UTILITY="Plesk"
+VAR_UTILITY_SCRIPT="AddMailAlias"
+
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo plesk"
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
@@ -6,17 +9,17 @@ VAR_EMAIL_ADDRESS=$1
 VAR_EMAIL_ADDRESS_ALIAS=$2
 
 if [[ $VAR_EMAIL_ADDRESS == "" ]]; then
-    echoInfo "Please provide an email address!"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Please provide an email address!"
     exit 1
 fi
 
 if [[ $VAR_EMAIL_ADDRESS_ALIAS == "" ]]; then
-    echoInfo "Please provide an alias for this email address!"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Please provide an alias for this email address!"
     exit 1
 fi
 
 VAR_EMAIL_ADDRESS_NEW_WITH_ALIAS="$VAR_EMAIL_ADDRESS_ALIAS@$(echo "$VAR_EMAIL_ADDRESS" | awk -F '@' '{print $2}')"
 
-echoInfo "Adding alias '$VAR_EMAIL_ADDRESS_ALIAS' to email address '$VAR_EMAIL_ADDRESS'..."
-echoInfo "New email address / alias: '$VAR_EMAIL_ADDRESS_NEW_WITH_ALIAS'."
+echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Adding alias '$VAR_EMAIL_ADDRESS_ALIAS' to email address '$VAR_EMAIL_ADDRESS'..."
+echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "New email address / alias: '$VAR_EMAIL_ADDRESS_NEW_WITH_ALIAS'."
 plesk bin mail -u "$VAR_EMAIL_ADDRESS" -aliases "add:$VAR_EMAIL_ADDRESS_ALIAS"
