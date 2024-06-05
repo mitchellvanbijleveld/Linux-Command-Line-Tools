@@ -146,13 +146,19 @@ CompareStatistics(){
     echoInfo "===== MAIL STATISTICS COMPARISON ====="
 
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
-        echoInfo "OK : Inbox"
+        echoInfo "Inbox : OK"
+    else
+        echoInfo "Inbox : NOT OK"
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
-        echoInfo "OK : Spam"
+        echoInfo "Spam  : OK"
+    else
+        echoInfo "Spam  : NOT OK"
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
-        echoInfo "OK : Sent"
+        echoInfo "Sent  : OK"
+    else
+        echoInfo "Sent  : NOT OK"
     fi
 
 }
