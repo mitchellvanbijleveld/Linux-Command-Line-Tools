@@ -53,7 +53,7 @@ PrintStatistics_FileSystem(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox | Spam | Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} | ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} | ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})"
     done
     #echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Spam"
     #for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
