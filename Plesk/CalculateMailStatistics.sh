@@ -148,7 +148,7 @@ PrintStatistics_Database(){
         string_inbox=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
         string_spam=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
         string_sent=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
-        string_total=$((#string_inbox + $string_spam + $string_sent))
+        string_total=$(($string_inbox + $string_spam + $string_sent))
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $email_address: "
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done <<< "$result_var_db_query_stats_accounts"
