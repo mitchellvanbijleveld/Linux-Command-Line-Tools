@@ -273,7 +273,7 @@ CompareStatistics(){
 
     if [[ $Fail_Sent == 1 ]] && ! [[ "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    else
+    elif [[ $Fail_Sent == 0 ]] && ! [[ "$@" == *"--verbose"* ]];
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
