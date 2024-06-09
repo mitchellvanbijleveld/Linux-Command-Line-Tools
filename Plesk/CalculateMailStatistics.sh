@@ -168,6 +168,7 @@ CompareStatistics(){
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
 
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per mailbox"
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
@@ -185,6 +186,7 @@ CompareStatistics(){
     fi
     echoInfo 
 
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per email address"
     while IFS= read -r email_address; do
         string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
         string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
@@ -214,31 +216,60 @@ CompareStatistics(){
 
 
 
-
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per date"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            fi
         else
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            Fail_Inbox=1
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            fi
         fi
     done
+
+    if [[ $Fail_Inbox == 1 ]] && ! [[ "$@" == *"--verbose"* ]]; then
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    fi
+
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            fi
         else
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            Fail_Spam=1
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            fi
         fi
     done
+
+    if [[ $Fail_Spam == 1 ]] && ! [[ "$@" == *"--verbose"* ]]; then
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    fi
+
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
+            fi
         else
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            Fail_Sent=1
+            if [[ "$@" == *"--verbose"* ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
+            fi
         fi
     done
+
+    if [[ $Fail_Sent == 1 ]] && ! [[ "$@" == *"--verbose"* ]]; then
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    fi
 
 }
 
