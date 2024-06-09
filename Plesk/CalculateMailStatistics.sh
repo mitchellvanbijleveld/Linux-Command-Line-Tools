@@ -16,6 +16,12 @@ fi
 
 VAR_STATISTICS_MAIL_COUNT_TOTAL=$(tree -a $VAR_SYSTEM_MAIL_DIR | grep -c $VAR_SYSTEM_HOSTNAME)
 
+if [[ "$@" == *"--verbose"* ]]; then
+    VAR_SCRIPT_VERBOSE=1
+else
+    VAR_SCRIPT_VERBOSE=0
+fi
+
 VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
 "$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
 "$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR"
@@ -219,60 +225,60 @@ CompareStatistics(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Inbox=1
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
     done
 
-    if [[ $Fail_Inbox == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    if [[ $Fail_Inbox -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Inbox == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    elif [[ $Fail_Inbox -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Spam=1
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
     done
 
-    if [[ $Fail_Spam == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    if [[ $Fail_Spam -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Spam == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    elif [[ $Fail_Spam -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Sent=1
-            if [[ "$@" == *"--verbose"* ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
     done
 
-    if [[ $Fail_Sent == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    if [[ $Fail_Sent -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Sent == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
+    elif [[ $Fail_Sent -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
@@ -280,7 +286,7 @@ CompareStatistics(){
 
 
 
-if [[ "$@" == *"--verbose"* ]]; then
+if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
     PrintStatistics_FileSystem
     PrintStatistics_Database
 fi
