@@ -231,13 +231,13 @@ CompareStatistics(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Inbox=1
             VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
@@ -252,13 +252,13 @@ CompareStatistics(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Spam=1
             VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
@@ -273,13 +273,13 @@ CompareStatistics(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
             fi
         else
             Fail_Sent=1
             VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
