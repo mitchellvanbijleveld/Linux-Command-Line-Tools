@@ -189,7 +189,7 @@ CompareStatistics(){
         string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
         string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
         string_sent_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
-        string_total_db=$(printf "%5d\n" $(($string_inbox + $string_spam + $string_sent)))
+        string_total_db=$(printf "%5d\n" $(($string_inbox_db + $string_spam_db + $string_sent_db)))
 
         string_total_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/total"))
         string_inbox_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/inbox"))
