@@ -196,16 +196,18 @@ CompareStatistics(){
         string_spam_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/spam"))
         string_sent_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/sent"))
 
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total (db vs fs) : $string_total_db vs $string_total_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $string_inbox_db vs $string_inbox_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  (db vs fs) : $string_spam_db vs $string_spam_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  (db vs fs) : $string_sent_db vs $string_sent_fs"
+
         if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
         else
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): NOT OK"
         fi
-
-
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done <<< "$result_var_db_query_stats_accounts"
-
+    echoInfo
 
 
 
