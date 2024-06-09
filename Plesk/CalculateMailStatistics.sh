@@ -191,10 +191,10 @@ CompareStatistics(){
         string_sent_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
         string_total_db=$(($string_inbox + $string_spam + $string_sent))
 
-        string_total_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$email_address/total"))
-        string_inbox_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$email_address/inbox"))
-        string_spam_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$email_address/spam"))
-        string_sent_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$email_address/sent"))
+        string_total_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/total"))
+        string_inbox_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/inbox"))
+        string_spam_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/spam"))
+        string_sent_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/sent"))
 
         if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
