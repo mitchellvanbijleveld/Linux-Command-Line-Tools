@@ -233,7 +233,7 @@ CompareStatistics(){
 
     if [[ $Fail_Inbox == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Inbox == 0 ]] && [[ ! "$@" == *"--verbose"* ]];
+    elif [[ $Fail_Inbox == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
@@ -253,7 +253,7 @@ CompareStatistics(){
 
     if [[ $Fail_Spam == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Spam == 0 ]] && [[ ! "$@" == *"--verbose"* ]];
+    elif [[ $Fail_Spam == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
@@ -273,7 +273,7 @@ CompareStatistics(){
 
     if [[ $Fail_Sent == 1 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Sent == 0 ]] && [[ ! "$@" == *"--verbose"* ]];
+    elif [[ $Fail_Sent == 0 ]] && [[ ! "$@" == *"--verbose"* ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
