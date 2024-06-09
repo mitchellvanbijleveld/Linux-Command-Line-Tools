@@ -2,6 +2,8 @@
 VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="CalculateMailStatistics"
 
+VAR_STATISTICS_FAIL=0
+
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
@@ -178,16 +180,19 @@ CompareStatistics(){
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
+        VAR_STATISTICS_FAIL=1
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
     else
+        VAR_STATISTICS_FAIL=1
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
     else
+        VAR_STATISTICS_FAIL=1
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : NOT OK"
     fi
     echoInfo 
@@ -212,6 +217,7 @@ CompareStatistics(){
         if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
         else
+            VAR_STATISTICS_FAIL=1
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): NOT OK"
         fi
     done <<< "$result_var_db_query_stats_accounts"
@@ -230,6 +236,7 @@ CompareStatistics(){
             fi
         else
             Fail_Inbox=1
+            VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
@@ -250,6 +257,7 @@ CompareStatistics(){
             fi
         else
             Fail_Spam=1
+            VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
@@ -270,6 +278,7 @@ CompareStatistics(){
             fi
         else
             Fail_Sent=1
+            VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG ]]; then
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
@@ -292,3 +301,9 @@ if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
 fi
 
 CompareStatistics
+
+if [[ $VAR_STATISTICS_FAIL -eq 0 ]]
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: OK! The statistics calculated from the filesystem match the statistics from the database."
+elif [[ $VAR_STATISTICS_FAIL -eq 1 ]]
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: NOT OK! The statistics calculated from the filesystem do not match the statistics from the database."
+fi
