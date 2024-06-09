@@ -302,8 +302,8 @@ fi
 
 CompareStatistics
 
-if [[ $VAR_STATISTICS_FAIL -eq 0 ]]
+if [[ $VAR_STATISTICS_FAIL -eq 0 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: OK! The statistics calculated from the filesystem match the statistics from the database."
-elif [[ $VAR_STATISTICS_FAIL -eq 1 ]]
+elif [[ $VAR_STATISTICS_FAIL -eq 1 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: NOT OK! The statistics calculated from the filesystem do not match the statistics from the database."
 fi
