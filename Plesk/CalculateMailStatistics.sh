@@ -290,7 +290,7 @@ CompareStatistics(){
     elif [[ $Fail_Sent -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
-
+    echoInfo
 }
 
 
