@@ -211,10 +211,9 @@ CompareStatistics(){
     done <<< "$result_var_db_query_stats_accounts"
     echoInfo
 
-
-
-
-
+    Fail_Inbox=0
+    Fail_Spam=0
+    Fail_Sent=0
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per date"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
