@@ -24,6 +24,13 @@ else
     VAR_SCRIPT_VERBOSE=0
 fi
 
+
+
+if [[ "$@" == *"--run-update-statistics-script"* ]]; then
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Running script to update statistics in database..."
+    sudo -u psaadm /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
+fi
+
 VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
 "$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
 "$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR"
