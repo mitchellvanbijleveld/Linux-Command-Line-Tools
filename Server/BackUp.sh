@@ -2,7 +2,7 @@
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
 
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo shasum sleep tar tree" # msmtp
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmtp
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 if [[ $(whoami) != "root" ]]; then
@@ -105,8 +105,8 @@ MoveBackUp(){
         return 99
     fi
 
-    if [ $(shasum "$2" | awk '{print $1}') == $(shasum "$3" | awk '{print $1}') ]; then
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    SHASUM OK"
+    if [ $(sha512sum "$2" | awk '{print $1}') == $(sha512sum "$3" | awk '{print $1}') ]; then
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    sha512sum OK"
         "$(which rm)" "$2"
     else
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Checksum mismatch for '$1'. Aborting this back-up..."
