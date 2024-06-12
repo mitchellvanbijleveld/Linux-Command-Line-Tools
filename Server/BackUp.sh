@@ -7,7 +7,7 @@ VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmt
 
 if [[ $(whoami) != "root" ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Only the 'root' user should execute this backup utility script. Exiting..."
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
     exit 1
 fi
 
@@ -20,7 +20,7 @@ VAR_BACKUP_FILE_TYPE="tar.zst"
 
 if ! [ -f "$VAR_BACKUP_FINAL_DIR" ]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File with destination to back-up does not exist. Exiting..."
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo 
     exit 1
 else
     VAR_BACKUP_FINAL_DIR=$(cat "$VAR_BACKUP_FINAL_DIR")
@@ -28,7 +28,7 @@ fi
 
 if ! [ -f "$VAR_SCRIPT_CONFIG_FILE" ]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "File with directories to back-up does not exist. Exiting..."
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" ""
+    echoInfo
     exit 1
 else
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Loading default configuration:"
