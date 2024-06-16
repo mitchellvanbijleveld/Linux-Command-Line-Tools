@@ -183,7 +183,7 @@ CompareStatistics(){
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
 
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per mailbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per mailbox"
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
@@ -204,7 +204,7 @@ CompareStatistics(){
     fi
     echoInfo 
 
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per email address"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per email address"
     while IFS= read -r email_address; do
         string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
         string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
@@ -234,7 +234,7 @@ CompareStatistics(){
     Fail_Spam=0
     Fail_Sent=0
 
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Per date"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per date"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
         if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
