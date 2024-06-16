@@ -48,31 +48,6 @@ declare -A VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT_DB
 
-PrintStatistics_FileSystem(){
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS ====="
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Total Mail Count is: $VAR_STATISTICS_MAIL_COUNT_TOTAL"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Inbox : ${VAR_STATISTICS["INBOX"]}"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Spam  : ${VAR_STATISTICS["SPAM"]}"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Sent  : ${VAR_STATISTICS["SENT"]}"
-    echoInfo 
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
-    for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
-        string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
-        string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
-        string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
-        string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(basename $var_email_address_string_file_path): "
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
-    done
-    echoInfo
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
-    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})"
-    done
-    echoInfo
-}
-
 WriteStatistics(){
     # $1 = email address
     # $2 = count total
@@ -146,36 +121,6 @@ done <<< "$result_var_db_query_stats_daily_volume"
 var_result_db_receivedHam=$(echo $result_var_db_query_stats | awk '{print $2}')
 var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
 var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
-
-
-
-PrintStatistics_Database(){
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS FROM DATABASE ====="
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The Total Mail Count is: $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Received Ham  : $var_result_db_receivedHam"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Received Spam : $var_result_db_receivedSpam"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent Ham      : $var_result_db_sentHam"
-    echoInfo
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "The total amount of email addresses: $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
-    while IFS= read -r email_address; do
-        string_inbox=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
-        string_spam=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
-        string_sent=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
-        string_total=$(printf "%5d\n" $(($string_inbox + $string_spam + $string_sent)))
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): "
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
-    done <<< "$result_var_db_query_stats_accounts"
-    echoInfo   
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Mail Per Date:"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
-    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})"
-    done
-    echoInfo
-
-}
 
 
 
@@ -302,9 +247,108 @@ CompareStatistics(){
 
 
 
-if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
+PrintStatistics_FileSystem_Header(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "##### STATISTICS ACCORDING TO FILE SYSTEM #####"
+}
+PrintStatistics_FileSystem_PerMailBox(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Mail Count (File System) : $VAR_STATISTICS_MAIL_COUNT_TOTAL"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Inbox : ${VAR_STATISTICS["INBOX"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Spam  : ${VAR_STATISTICS["SPAM"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Sent  : ${VAR_STATISTICS["SENT"]}"
+    echoInfo 
+}
+PrintStatistics_FileSystem_PerEmailAddress(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Amount Of Email Addresses (File System) : $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
+    for var_email_address_string_file_path in "$VAR_SCRIPT_STATISTICS_DIR"/*; do
+        string_total=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/total"))
+        string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
+        string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
+        string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(basename $var_email_address_string_file_path): "
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+    done
+    echoInfo
+}
+PrintStatistics_FileSystem_PerDate(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (File System):"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})"
+    done
+    echoInfo
+}
+PrintStatistics_FileSystem(){
+    PrintStatistics_FileSystem_Header
+    PrintStatistics_FileSystem_PerMailBox
+    PrintStatistics_FileSystem_PerEmailAddress
+    PrintStatistics_FileSystem_PerDate
+}
+
+
+PrintStatistics_Database_Header(){
+ echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "##### STATISTICS ACCORDING TO DATABASE ###########"
+}
+PrintStatistics_Database_PerMailBox(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Mail Count (Fetched From Database) : $(($var_result_db_receivedHam + $var_result_db_receivedSpam + $var_result_db_sentHam))"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "- Total Mail Count         Received Ham  : $var_result_db_receivedHam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "- Total Mail Count         Received Spam : $var_result_db_receivedSpam"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "- Total Mail Count         Sent Ham      : $var_result_db_sentHam"
+    echoInfo
+}
+PrintStatistics_Database_PerEmailAddress(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Amount Of Email Addresses (Database) : [not implemented yet]"
+    while IFS= read -r email_address; do
+        string_inbox=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
+        string_spam=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
+        string_sent=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
+        string_total=$(printf "%5d\n" $(($string_inbox + $string_spam + $string_sent)))
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): "
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+    done <<< "$result_var_db_query_stats_accounts"
+    echoInfo  
+}
+PrintStatistics_Database_PerDate(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Database):"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})"
+    done
+    echoInfo
+}
+PrintStatistics_Database(){
+    PrintStatistics_Database_Header
+    PrintStatistics_Database_PerMailBox
+    PrintStatistics_Database_PerEmailAddress
+    PrintStatistics_Database_PerDate
+}
+
+
+
+
+
+
+
+
+
+
+
+
+if [[ "$@" == *"--print-statistics-filesystem"* ]]; then
     PrintStatistics_FileSystem
+fi
+
+if [[ "$@" == *"--print-statistics-database"* ]]; then
     PrintStatistics_Database
+fi
+
+
+
+
+
+
+
+if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
+    echo "verbose flag"
 fi
 
 CompareStatistics
