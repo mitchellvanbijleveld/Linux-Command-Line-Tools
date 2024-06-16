@@ -341,7 +341,18 @@ if [[ "$@" == *"--print-statistics-database"* ]]; then
     PrintStatistics_Database
 fi
 
-
+if [[ "$@" == *"--print-statistics-per-mailbox"* ]]; then
+    PrintStatistics_FileSystem_PerMailBox
+    PrintStatistics_Database_PerMailBox
+fi
+if [[ "$@" == *"--print-statistics-per-emailaddress"* ]]; then
+    PrintStatistics_FileSystem_PerEmailAddress
+    PrintStatistics_Database_PerEmailAddress
+fi
+if [[ "$@" == *"--print-statistics-per-date"* ]]; then
+    PrintStatistics_FileSystem_PerDate
+    PrintStatistics_Database_PerDate
+fi
 
 
 
