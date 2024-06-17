@@ -1,11 +1,9 @@
 #!/bin/bash
 VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="CalculateMailStatistics"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 
 VAR_STATISTICS_FAIL=0
-
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
-"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)

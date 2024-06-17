@@ -1,9 +1,7 @@
 #!/bin/bash
 VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="AddMailAlias"
-
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo plesk"
-"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 VAR_EMAIL_ADDRESS=$1
 VAR_EMAIL_ADDRESS_ALIAS=$2
