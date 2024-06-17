@@ -1,5 +1,5 @@
 #!/bin/bash
-VAR_UTILITY="Git"
+VAR_UTILITY="GitHub"
 VAR_UTILITY_SCRIPT="Pull"
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo git sudo"
 
