@@ -165,12 +165,25 @@ CompareStatistics(){
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  (db vs fs) : $string_sent_db vs $string_sent_fs"
 
         if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
+            fi
         else
+            FAIL_EMAILADDRESS=1
             VAR_STATISTICS_FAIL=1
-            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): NOT OK"
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): NOT OK"
+            fi
         fi
     done <<< "$result_var_db_query_stats_accounts"
+
+    if [[ $FAIL_EMAILADDRESS -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    elif [[ $FAIL_EMAILADDRESS -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+    fi
+
+
     echoInfo
 
     Fail_Inbox=0
