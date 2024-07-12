@@ -1,6 +1,7 @@
 #!/bin/bash
 VAR_UTILITY="Plesk"
 VAR_UTILITY_SCRIPT="CalculateMailStatistics"
+VAR_UTILITY_SCRIPT_VERSION="2024.07.12-1240"
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 
 VAR_STATISTICS_FAIL=0
