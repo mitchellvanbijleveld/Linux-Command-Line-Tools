@@ -30,7 +30,11 @@ if [[ "$@" == *"--run-update-statistics-script"* ]]; then
 fi
 
 VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
-"$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
+if [ -d "$VAR_SCRIPT_STATISTICS_DIR" ]; then
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing directory '$VAR_SCRIPT_STATISTICS_DIR'..."
+    "$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
+fi
+echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating directory '$VAR_SCRIPT_STATISTICS_DIR'..."
 "$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR"
 
 declare -A VAR_STATISTICS
