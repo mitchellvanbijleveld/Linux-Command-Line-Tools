@@ -2,6 +2,12 @@
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
 
+if [[ "$@" == *"--verbose"* ]]; then
+    VERBOSE=1
+else
+    VERBOSE=0
+fi
+
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmtp
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
@@ -76,9 +82,19 @@ CreateBackUp(){
     
     #sleep 5
 
-    "$(which tar)" --use-compress-program=zstd -cvf "$2" "$1" &> /dev/null
+    if [ $VERBOSE -eq 1 ]; then
+        echo 'verbose'
+        "$(which tar)" --use-compress-program=zstd -cvf "$2" "$1"
+    else
+        "$(which tar)" --use-compress-program=zstd -cvf "$2" "$1" &> /dev/null
+    fi
 
-    return 0
+    if [ $? -eq 0 ]; then
+        return 0
+    else
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Error while compressing back-up for '$1'. Process exited with exit code $?"
+        return 99
+    fi
 
 }
 
