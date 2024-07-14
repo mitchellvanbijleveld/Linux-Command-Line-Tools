@@ -3,9 +3,9 @@ VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
 
 if [[ "$@" == *"--verbose"* ]]; then
-    VERBOSE=1
+    VAR_SCRIPT_VERBOSE=1
 else
-    VERBOSE=0
+    VAR_SCRIPT_VERBOSE=0
 fi
 
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmtp
@@ -82,7 +82,7 @@ CreateBackUp(){
     
     #sleep 5
 
-    if [ $VERBOSE -eq 1 ]; then
+    if [ $VAR_SCRIPT_VERBOSE -eq 1 ]; then
         echo 'verbose'
         "$(which tar)" --use-compress-program=zstd -cvf "$2" "$1"
     else
