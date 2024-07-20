@@ -127,6 +127,9 @@ if ! [ $(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f) 
     die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
 fi
 
+# Adjust the utility script real path with the find parameter.
+VAR_UTILITY_SCRIPT_REAL_PATH=$(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
+
 # Check Dependencies
 echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
 VAR_LINE_DEPENDENCIES=$(grep '^VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS=' "$VAR_UTILITY_SCRIPT_REAL_PATH")
