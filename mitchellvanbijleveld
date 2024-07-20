@@ -113,7 +113,7 @@ if [[ "$VAR_UTILITY" == "" ]]; then
 fi
 
 # Check if Utility exists.
-if ! [ -d "$VAR_UTILITY_FOLDER_PATH" ]; then
+if ! [ $(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d) ]; then
     die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
 fi
 
@@ -123,7 +123,7 @@ if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
 fi
 
 # Check if Utility Script exists.
-if ! [ -f "$VAR_UTILITY_SCRIPT_REAL_PATH" ]; then
+if ! [ $(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f) ]; then
     die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
 fi
 
