@@ -215,6 +215,7 @@ CompareStatistics(){
             Fail_Inbox=1
             VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Inbox (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
@@ -242,6 +243,7 @@ CompareStatistics(){
             Fail_Spam=1
             VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Spam (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
@@ -269,6 +271,7 @@ CompareStatistics(){
             Fail_Sent=1
             VAR_STATISTICS_FAIL=1
             if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Sent (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
             fi
         fi
