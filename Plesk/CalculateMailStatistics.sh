@@ -136,18 +136,21 @@ CompareStatistics(){
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
         VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $$var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
     else
         VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $$var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
     else
         VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $$var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : NOT OK"
     fi
     echoInfo 
