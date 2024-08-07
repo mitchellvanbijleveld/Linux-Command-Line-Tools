@@ -288,8 +288,11 @@ PrintStatistics_Comparison_PerEmailAddress(){
 
 }
 PrintStatistics_Comparison_PerDate(){
+    VAR_FAIL_DATE=0
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparison Per Date:"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
+    if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
+    fi
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
         # Reset Status Text per date.
         var_text_inbox="  OK  "
@@ -300,24 +303,32 @@ PrintStatistics_Comparison_PerDate(){
         var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
         if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
             VAR_STATISTICS_FAIL=1
+            VAR_FAIL_DATE=1
             var_text_inbox="NOT OK"
         fi
         var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
         var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
         if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
             VAR_STATISTICS_FAIL=1
+            VAR_FAIL_DATE=1
             var_text_spam="NOT OK"
         fi
         var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
         var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
         if [[ $var_stats_sent_db -ne $var_stats_sent_fs ]]; then
             VAR_STATISTICS_FAIL=1
+            VAR_FAIL_DATE=1
             var_text_sent="NOT OK"
         fi
         if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
         fi
     done
+    if [[ $VAR_FAIL_DATE -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    elif [[ $VAR_FAIL_DATE -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+    fi
     echoInfo
 }
 PrintStatistics_Comparison(){
