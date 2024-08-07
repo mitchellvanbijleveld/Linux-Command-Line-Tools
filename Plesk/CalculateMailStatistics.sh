@@ -198,90 +198,11 @@ CompareStatistics(){
     Fail_Spam=0
     Fail_Sent=0
 
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per date"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
-
-        if ! [[ -v VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date] ]]; then
-            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Date '$date' does not exist in file system for Inbox"
-            continue
-        fi
-
-        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
-            fi
-        else
-            Fail_Inbox=1
-            VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Inbox (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}"
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
-            fi
-        fi
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}) VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}) VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}))"
     done
-
-    if [[ $Fail_Inbox -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Inbox -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
-    fi
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam"
-    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[@]}"; do echo "$date"; done | sort); do
-
-        if ! [[ -v VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date] ]]; then
-            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Date '$date' does not exist in file system for Spam"
-            continue
-        fi
-
-        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
-            fi
-        else
-            Fail_Spam=1
-            VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Spam (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}"
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
-            fi
-        fi
-    done
-
-    if [[ $Fail_Spam -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Spam -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
-    fi
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent"
-    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[@]}"; do echo "$date"; done | sort); do
-
-        if ! [[ -v VAR_STATISTICS_MAIL_PER_DATE_SENT[$date] ]]; then
-            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Date '$date' does not exist in file system for Sent"
-            continue
-        fi
-
-        if [[ ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]} == ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : OK"
-            fi
-        else
-            Fail_Sent=1
-            VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " Sent (db vs fs) : ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]} vs ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}"
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  $date : NOT OK"
-            fi
-        fi
-    done
-
-    if [[ $Fail_Sent -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $Fail_Sent -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
-    fi
     echoInfo
 }
 
