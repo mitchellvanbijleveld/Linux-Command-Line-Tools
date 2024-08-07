@@ -327,7 +327,9 @@ PrintStatistics_Comparison_PerDate(){
             VAR_STATISTICS_FAIL=1
             var_text_sent="NOT OK"
         fi
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
+        if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
+        fi
     done
     echoInfo
 }
@@ -353,6 +355,10 @@ if [[ "$@" == *"--print-statistics-database"* ]]; then
     PrintStatistics_Database
 fi
 
+#if [[ "$@" == *"--print-statistics-comparison"* ]]; then
+    PrintStatistics_Comparison
+#fi
+
 if [[ "$@" == *"--print-statistics-per-mailbox"* ]]; then
     PrintStatistics_FileSystem_PerMailBox
     PrintStatistics_Database_PerMailBox
@@ -373,8 +379,6 @@ fi
 if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
     echo "verbose flag"
 fi
-
-PrintStatistics_Comparison
 
 if [[ $VAR_STATISTICS_FAIL -eq 0 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: OK! The statistics calculated from the filesystem match the statistics from the database."
