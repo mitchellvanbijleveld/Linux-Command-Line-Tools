@@ -218,7 +218,7 @@ PrintStatistics_Comparison_Header(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
 }
 PrintStatistics_Comparison_PerMailBox(){
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per mailbox"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Comparison per mailbox"
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
     else
@@ -243,20 +243,7 @@ PrintStatistics_Comparison_PerMailBox(){
     echoInfo 
 }
 PrintStatistics_Comparison_PerEmailAddress(){
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Amount Of Email Addresses (Database) : [not implemented yet]"
-    while IFS= read -r email_address; do
-        string_inbox=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
-        string_spam=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
-        string_sent=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
-        string_total=$(printf "%5d\n" $(($string_inbox + $string_spam + $string_sent)))
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): "
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
-    done <<< "$result_var_db_query_stats_accounts"
-    echoInfo  
-
-
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per email address"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Comparison per email address"
     while IFS= read -r email_address; do
         string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
         string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
@@ -301,7 +288,7 @@ PrintStatistics_Comparison_PerEmailAddress(){
 
 }
 PrintStatistics_Comparison_PerDate(){
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparison Per Date:"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
         # Reset Status Text per date.
