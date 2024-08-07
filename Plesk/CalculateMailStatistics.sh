@@ -127,106 +127,6 @@ var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
 
 
-CompareStatistics(){
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per mailbox"
-    if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
-    else
-        VAR_STATISTICS_FAIL=1
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
-    fi
-    if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
-    else
-        VAR_STATISTICS_FAIL=1
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
-    fi
-    if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
-    else
-        VAR_STATISTICS_FAIL=1
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : NOT OK"
-    fi
-    echoInfo 
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per email address"
-    while IFS= read -r email_address; do
-        string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
-        string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
-        string_sent_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
-        string_total_db=$(printf "%5d\n" $(($string_inbox_db + $string_spam_db + $string_sent_db)))
-
-        string_total_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/total"))
-        string_inbox_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/inbox"))
-        string_spam_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/spam"))
-        string_sent_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/sent"))
-
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total (db vs fs) : $string_total_db vs $string_total_fs"
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $string_inbox_db vs $string_inbox_fs"
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  (db vs fs) : $string_spam_db vs $string_spam_fs"
-        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  (db vs fs) : $string_sent_db vs $string_sent_fs"
-
-        if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): OK"
-            fi
-        else
-            FAIL_EMAILADDRESS=1
-            VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): NOT OK"
-            fi
-        fi
-    done <<< "$result_var_db_query_stats_accounts"
-
-    if [[ $FAIL_EMAILADDRESS -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $FAIL_EMAILADDRESS -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
-    fi
-
-
-    echoInfo
-
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox  | Spam   | Sent   "
-    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
-
-        var_text_inbox="  OK  "
-        var_text_spam="  OK  "
-        var_text_sent="  OK  "
-
-        var_stats_inbox_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]})
-        var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
-        if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            var_text_inbox="NOT OK"
-        fi
-        var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
-        var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
-        if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            var_text_spam="NOT OK"
-        fi
-        var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
-        var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
-        if [[ $var_stats_sent_db -ne $var_stats_sent_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            var_text_sent="NOT OK"
-        fi
-
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
-    done
-    echoInfo
-}
-
-
 
 PrintStatistics_FileSystem_Header(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "##### STATISTICS ACCORDING TO FILE SYSTEM #####"
@@ -314,6 +214,137 @@ PrintStatistics_Database(){
 
 
 
+PrintStatistics_Comparison_Header(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "===== MAIL STATISTICS COMPARISON ====="
+}
+PrintStatistics_Comparison_PerMailBox(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per mailbox"
+    if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
+    else
+        VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
+    fi
+    if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
+    else
+        VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
+    fi
+    if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
+    else
+        VAR_STATISTICS_FAIL=1
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : NOT OK"
+    fi
+    echoInfo 
+}
+PrintStatistics_Comparison_PerEmailAddress(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Amount Of Email Addresses (Database) : [not implemented yet]"
+    while IFS= read -r email_address; do
+        string_inbox=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
+        string_spam=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
+        string_sent=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
+        string_total=$(printf "%5d\n" $(($string_inbox + $string_spam + $string_sent)))
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): "
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+    done <<< "$result_var_db_query_stats_accounts"
+    echoInfo  
+
+
+
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Statistics per email address"
+    while IFS= read -r email_address; do
+        string_inbox_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $2}'))
+        string_spam_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $3}'))
+        string_sent_db=$(printf "%5d\n" $(echo "$email_address" | awk '{print $5}'))
+        string_total_db=$(printf "%5d\n" $(($string_inbox_db + $string_spam_db + $string_sent_db)))
+
+        string_total_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/total"))
+        string_inbox_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/inbox"))
+        string_spam_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/spam"))
+        string_sent_fs=$(printf "%5d\n" $(cat "$VAR_SCRIPT_STATISTICS_DIR/$(echo "$email_address" | awk '{print $1}')/sent"))
+
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total (db vs fs) : $string_total_db vs $string_total_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $string_inbox_db vs $string_inbox_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  (db vs fs) : $string_spam_db vs $string_spam_fs"
+        echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  (db vs fs) : $string_sent_db vs $string_sent_fs"
+
+        if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " -     OK: $(echo "$email_address" | awk '{print $1}')"
+            fi
+        else
+            FAIL_EMAILADDRESS=1
+            VAR_STATISTICS_FAIL=1
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - NOT OK: $(echo "$email_address" | awk '{print $1}')"
+            fi
+        fi
+    done <<< "$result_var_db_query_stats_accounts"
+
+    if [[ $FAIL_EMAILADDRESS -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+    elif [[ $FAIL_EMAILADDRESS -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+    fi
+
+
+    echoInfo
+
+
+
+
+
+}
+PrintStatistics_Comparison_PerDate(){
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
+    for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
+        # Reset Status Text per date.
+        var_text_inbox="  OK  "
+        var_text_spam="  OK  "
+        var_text_sent="  OK  "
+
+        var_stats_inbox_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]})
+        var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
+        if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_inbox="NOT OK"
+        fi
+        var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
+        var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
+        if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_spam="NOT OK"
+        fi
+        var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
+        var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
+        if [[ $var_stats_sent_db -ne $var_stats_sent_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_sent="NOT OK"
+        fi
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
+    done
+    echoInfo
+}
+PrintStatistics_Comparison(){
+    PrintStatistics_Comparison_Header
+    PrintStatistics_Comparison_PerMailBox
+    PrintStatistics_Comparison_PerEmailAddress
+    PrintStatistics_Comparison_PerDate
+}
+
+
+
+
+
+
+
+
 if [[ "$@" == *"--print-statistics-filesystem"* ]]; then
     PrintStatistics_FileSystem
 fi
@@ -343,7 +374,7 @@ if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
     echo "verbose flag"
 fi
 
-CompareStatistics
+PrintStatistics_Comparison
 
 if [[ $VAR_STATISTICS_FAIL -eq 0 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "FileSystem vs DataBase: OK! The statistics calculated from the filesystem match the statistics from the database."
