@@ -194,13 +194,14 @@ CompareStatistics(){
 
     echoInfo
 
-    var_text_inbox="  OK  "
-    var_text_spam="  OK  "
-    var_text_sent="  OK  "
-
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox  | Spam   | Sent   "
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
+
+        var_text_inbox="  OK  "
+        var_text_spam="  OK  "
+        var_text_sent="  OK  "
+
         var_stats_inbox_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]})
         var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
         if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
