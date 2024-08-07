@@ -194,14 +194,33 @@ CompareStatistics(){
 
     echoInfo
 
-    Fail_Inbox=0
-    Fail_Spam=0
-    Fail_Sent=0
+    var_text_inbox="  OK  "
+    var_text_spam="  OK  "
+    var_text_sent="  OK  "
 
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Comparison):"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox  | Spam   | Sent   "
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]}) VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]}) VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]}) VERSUS $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})"
+        var_stats_inbox_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]})
+        var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
+        if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_inbox="NOT OK"
+        fi
+        var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
+        var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
+        if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_spam="NOT OK"
+        fi
+        var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
+        var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
+        if [[ $var_stats_sent_db -ne $var_stats_sent_fs ]]; then
+            VAR_STATISTICS_FAIL=1
+            var_text_sent="NOT OK"
+        fi
+
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
     done
     echoInfo
 }
