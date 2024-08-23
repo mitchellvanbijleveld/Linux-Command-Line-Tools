@@ -30,7 +30,7 @@ if [[ "$@" == *"--run-update-statistics-script"* ]]; then
     sudo -u psaadm /opt/psa/admin/bin/php -dauto_prepend_file=sdk.php '/opt/psa/admin/plib/modules/email-security/scripts/update-stats.php'
 fi
 
-VAR_SCRIPT_STATISTICS_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/statistics"
+VAR_SCRIPT_STATISTICS_DIR="$VAR_UTILITY_SCRIPT_TEMP_DIR/statistics"
 if [ -d "$VAR_SCRIPT_STATISTICS_DIR" ]; then
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Removing directory '$VAR_SCRIPT_STATISTICS_DIR'..."
     "$(which rm)" -r "$VAR_SCRIPT_STATISTICS_DIR"
