@@ -1,6 +1,8 @@
 #!/bin/bash
 VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
+VAR_UTILITY_SCRIPT_VERSION="2024.XX.XX-XXXX"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmtp
 
 if [[ "$@" == *"--verbose"* ]]; then
     VAR_SCRIPT_VERBOSE=1
@@ -8,18 +10,14 @@ else
     VAR_SCRIPT_VERBOSE=0
 fi
 
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo sha512sum sleep tar tree" # msmtp
-"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
-
 if [[ $(whoami) != "root" ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Only the 'root' user should execute this backup utility script. Exiting..."
     echoInfo
     exit 1
 fi
 
-VAR_SCRIPT_CONFIG_FILE="$VAR_BIN_CONFIG_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/directories"
-VAR_BACKUP_TEMP_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
-VAR_BACKUP_FINAL_DIR="$VAR_BIN_CONFIG_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT/destination"
+VAR_SCRIPT_CONFIG_FILE="$VAR_UTILITY_SCRIPT_CONFIG_DIR/directories"
+VAR_BACKUP_FINAL_DIR="$VAR_UTILITY_SCRIPT_CONFIG_DIR/destination"
 VAR_BACKUP_MAX_BACKUPS=4
 #VAR_BACKUP_MAX_HASH_CHECKS=60
 VAR_BACKUP_FILE_TYPE="tar.zst"
@@ -38,9 +36,9 @@ if ! [ -f "$VAR_SCRIPT_CONFIG_FILE" ]; then
     exit 1
 else
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Loading default configuration:"
-    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_TEMP_DIR        : $VAR_BACKUP_TEMP_DIR"
-    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_FINAL_DIR       : $VAR_BACKUP_FINAL_DIR"
-    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_BACKUPS     : $VAR_BACKUP_MAX_BACKUPS"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_TEMP_DIR : $VAR_UTILITY_SCRIPT_TEMP_DIR"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_FINAL_DIR        : $VAR_BACKUP_FINAL_DIR"
+    echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_BACKUPS      : $VAR_BACKUP_MAX_BACKUPS"
     #echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_HASH_CHECKS : $VAR_BACKUP_MAX_HASH_CHECKS"
 fi
 
@@ -192,7 +190,7 @@ while IFS= read -r var_directory_line; do
     fi
 
     var_datetime_yearmonthday=$(date +"%Y%m%d")
-    var_backup_file_dir_temp="$VAR_BACKUP_TEMP_DIR$var_backup_directory/$var_datetime_yearmonthday"
+    var_backup_file_dir_temp="$VAR_UTILITY_SCRIPT_TEMP_DIR$var_backup_directory/$var_datetime_yearmonthday"
     var_backup_file_dir_final="$VAR_BACKUP_FINAL_DIR$var_backup_directory/$var_datetime_yearmonthday"
 
     echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Creating temporary directory '$var_backup_file_dir_temp'..."
