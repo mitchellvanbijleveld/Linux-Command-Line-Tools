@@ -8,7 +8,7 @@ export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
 ##################################################
 
 export VAR_SCRIPT_DEBUG=false
-VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/^ *//; s/ \{2,\}/ /g")
+VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/^ *//; s/ \{2,\}/ /g") # replace --debug, single space and two spaces with nothing
 export VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
 export VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
 VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/$VAR_UTILITY//; s/$VAR_UTILITY_SCRIPT//; s/^ *//; s/ $//")
@@ -139,6 +139,14 @@ VAR_LINE_DEPENDENCIES=$(grep '^VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS=' "$VAR_UT
 eval "$VAR_LINE_DEPENDENCIES"
 echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check script for '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
+
+# Export vars usable by the script
+VAR_LINE_UTILITY=$(grep '^VAR_UTILITY=' "$VAR_UTILITY_SCRIPT_REAL_PATH")
+eval "$VAR_LINE_UTILITY"
+VAR_LINE_UTILITY_SCRIPT=$(grep '^VAR_UTILITY_SCRIPT=' "$VAR_UTILITY_SCRIPT_REAL_PATH")
+eval "$VAR_LINE_UTILITY_SCRIPT"
+export VAR_UTILITY_SCRIPT_CONFIG_DIR="$VAR_BIN_CONFIG_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
+export VAR_UTILITY_SCRIPT_TEMP_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
 
 # Start the utility script with arguments.
 echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
