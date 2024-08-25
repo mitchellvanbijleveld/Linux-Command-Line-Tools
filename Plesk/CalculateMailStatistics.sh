@@ -77,7 +77,7 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
         if [ -d $var_email_address ]; then
             var_email_address_string=$(basename "$var_email_address")@$(basename "$var_domain")
 
-            var_statistics_mail_count_total=$(tree -a $var_email_address | grep -c $VAR_SYSTEM_HOSTNAME)
+            var_statistics_mail_count_total=$(tree -a -I '.Drafts' $var_email_address | grep -c $VAR_SYSTEM_HOSTNAME)
             var_statistics_mail_count_inbox=$(tree -a -I '.Drafts|.Sent|.Spam' "$var_email_address/Maildir/" | grep -c $VAR_SYSTEM_HOSTNAME)
             ((VAR_STATISTICS["INBOX"]+=var_statistics_mail_count_inbox))
             while IFS= read -r date; do
