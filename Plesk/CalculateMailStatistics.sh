@@ -233,21 +233,21 @@ PrintStatistics_Comparison_Header(){
 PrintStatistics_Comparison_PerMailBox(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Comparison per mailbox"
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : OK : $(printf "%5d\n" ${VAR_STATISTICS["INBOX"]})"
     else
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox : NOT OK"
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : OK : $(printf "%5d\n" ${VAR_STATISTICS["SPAM"]})"
     else
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam  : NOT OK"
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  : OK : $(printf "%5d\n" ${VAR_STATISTICS["SENT"]})"
     else
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
