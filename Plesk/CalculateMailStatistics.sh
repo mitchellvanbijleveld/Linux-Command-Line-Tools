@@ -42,10 +42,12 @@ declare -A VAR_STATISTICS
 VAR_STATISTICS["INBOX"]=0
 VAR_STATISTICS["SPAM"]=0
 VAR_STATISTICS["SENT"]=0
+VAR_STATISTICS["DRAFTS"]=0
 
 declare -A VAR_STATISTICS_MAIL_PER_DATE_INBOX
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SENT
+declare -A VAR_STATISTICS_MAIL_PER_DATE_DRAFTS
 
 declare -A VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB
 declare -A VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB
@@ -57,6 +59,7 @@ WriteStatistics(){
     # $3 = count inbox
     # $4 = count spam
     # $5 = count sent
+    # $6 = count drafts
 
     "$(which mkdir)" -p "$VAR_SCRIPT_STATISTICS_DIR/$1"
 
@@ -64,6 +67,7 @@ WriteStatistics(){
     echo "$3" > "$VAR_SCRIPT_STATISTICS_DIR/$1/inbox"
     echo "$4" > "$VAR_SCRIPT_STATISTICS_DIR/$1/spam"
     echo "$5" > "$VAR_SCRIPT_STATISTICS_DIR/$1/sent"
+    echo "$6" > "$VAR_SCRIPT_STATISTICS_DIR/$1/drafts"
 
 }
 
@@ -94,10 +98,17 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
                     ((VAR_STATISTICS_MAIL_PER_DATE_INBOX["$date"]--))
             done < <(find "$var_email_address/Maildir/.Sent/" -type f -iname "*$VAR_SYSTEM_HOSTNAME*" -printf '%TY-%Tm-%Td\n')
 
-            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $var_email_address_string $var_statistics_mail_count_total $var_statistics_mail_count_inbox $var_statistics_mail_count_spam $var_statistics_mail_count_sent"
+            var_statistics_mail_count_drafts=$(tree -a "$var_email_address/Maildir/.Drafts/" | grep -c $VAR_SYSTEM_HOSTNAME)
+            ((VAR_STATISTICS["DRAFTS"]+=var_statistics_mail_count_drafts))
+            while IFS= read -r date; do
+                    ((VAR_STATISTICS_MAIL_PER_DATE_DRAFTS["$date"]++))
+                    ((VAR_STATISTICS_MAIL_PER_DATE_INBOX["$date"]--))
+            done < <(find "$var_email_address/Maildir/.Drafts/" -type f -iname "*$VAR_SYSTEM_HOSTNAME*" -printf '%TY-%Tm-%Td\n')
+
+            echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $var_email_address_string $var_statistics_mail_count_total $var_statistics_mail_count_inbox $var_statistics_mail_count_spam $var_statistics_mail_count_sent $var_statistics_mail_count_drafts"
 
             # Write statistics to file
-            WriteStatistics "$var_email_address_string" "$var_statistics_mail_count_total" "$var_statistics_mail_count_inbox" "$var_statistics_mail_count_spam" "$var_statistics_mail_count_sent"
+            WriteStatistics "$var_email_address_string" "$var_statistics_mail_count_total" "$var_statistics_mail_count_inbox" "$var_statistics_mail_count_spam" "$var_statistics_mail_count_sent" "$var_statistics_mail_count_drafts"
 
         fi
     done
@@ -132,10 +143,11 @@ PrintStatistics_FileSystem_Header(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "##### STATISTICS ACCORDING TO FILE SYSTEM #####"
 }
 PrintStatistics_FileSystem_PerMailBox(){
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Mail Count (File System) : $VAR_STATISTICS_MAIL_COUNT_TOTAL"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Inbox : ${VAR_STATISTICS["INBOX"]}"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Spam  : ${VAR_STATISTICS["SPAM"]}"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Sent  : ${VAR_STATISTICS["SENT"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Mail Count (File System)  : $VAR_STATISTICS_MAIL_COUNT_TOTAL"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Inbox  : ${VAR_STATISTICS["INBOX"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Spam   : ${VAR_STATISTICS["SPAM"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Sent   : ${VAR_STATISTICS["SENT"]}"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Drafts : ${VAR_STATISTICS["DRAFTS"]}"
     echoInfo 
 }
 PrintStatistics_FileSystem_PerEmailAddress(){
@@ -145,16 +157,17 @@ PrintStatistics_FileSystem_PerEmailAddress(){
         string_inbox=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/inbox"))
         string_spam=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/spam"))
         string_sent=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/sent"))
+        string_drafts=$(printf "%5d\n" $(cat "$var_email_address_string_file_path/drafts"))
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(basename $var_email_address_string_file_path): "
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent, Drafts: $string_drafts)"
     done
     echoInfo
 }
 PrintStatistics_FileSystem_PerDate(){
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (File System):"
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent"
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date      : Inbox |  Spam |  Sent | Drafts"
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX[@]}"; do echo "$date"; done | sort); do
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})"
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date: $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]}) | $(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_DRAFTS[$date]})"
     done
     echoInfo
 }
