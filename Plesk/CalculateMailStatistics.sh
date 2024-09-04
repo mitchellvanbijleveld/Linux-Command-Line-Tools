@@ -23,6 +23,11 @@ else
     VAR_SCRIPT_VERBOSE=0
 fi
 
+if [[ "$@" == *"--repair-db"* ]]; then
+    VAR_SCRIPT_REPAIR_DB=1
+else
+    VAR_SCRIPT_REPAIR_DB=0
+fi
 
 
 if [[ "$@" == *"--run-update-statistics-script"* ]]; then
@@ -137,6 +142,9 @@ var_result_db_receivedSpam=$(echo $result_var_db_query_stats | awk '{print $4}')
 var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
 
+DB_RepairRow(){
+    "$(which mysql)" -u root -D emailsecurity -Bse "$1"
+}
 
 
 PrintStatistics_FileSystem_Header(){
@@ -319,6 +327,10 @@ PrintStatistics_Comparison_PerDate(){
             VAR_STATISTICS_FAIL=1
             VAR_FAIL_DATE=1
             var_text_inbox="NOT OK"
+            if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedHam` = '$var_stats_inbox_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                var_text_inbox="REPAIR"
+            fi
         fi
         var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
         var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
@@ -326,6 +338,10 @@ PrintStatistics_Comparison_PerDate(){
             VAR_STATISTICS_FAIL=1
             VAR_FAIL_DATE=1
             var_text_spam="NOT OK"
+            if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedSpam` = '$var_stats_spam_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                var_text_spam="REPAIR"
+            fi
         fi
         var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
         var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
@@ -333,6 +349,10 @@ PrintStatistics_Comparison_PerDate(){
             VAR_STATISTICS_FAIL=1
             VAR_FAIL_DATE=1
             var_text_sent="NOT OK"
+            if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `sentHam` = '$var_stats_sent_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                var_text_sent="REPAIR"
+            fi
         fi
         if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
