@@ -348,6 +348,8 @@ PrintStatistics_Comparison_PerEmailAddress(){
 }
 PrintStatistics_Comparison_PerDate(){
     VAR_FAIL_DATE=0
+    VAR_DATE_REPAIR=0
+    VAR_DATE_REPAIR_FAIL=0
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Comparison Per Date:"
     if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
@@ -365,7 +367,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedHam = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_inbox="REPAIR"
+                    VAR_DATE_REPAIR=1
                 else
+                    VAR_DATE_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_inbox="RE FAIL"                   
@@ -383,7 +387,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_spam="REPAIR"
+                    VAR_DATE_REPAIR=1
                 else
+                    VAR_DATE_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_spam="RE FAIL"
@@ -401,7 +407,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET sentHam = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_sent="REPAIR"
+                    VAR_DATE_REPAIR=1
                 else
+                    VAR_DATE_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_sent="RE FAIL"
@@ -416,10 +424,19 @@ PrintStatistics_Comparison_PerDate(){
             echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
         fi
     done
+
     if [[ $VAR_FAIL_DATE -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
     elif [[ $VAR_FAIL_DATE -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+    fi
+
+    if [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK"
+    elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK & NOT OK"
+    elif [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]] && [[ $VAR_SCRIPT_VERBOSE -eq 0 ]]; then
+        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR NOT OK"
     fi
     echoInfo
 }
