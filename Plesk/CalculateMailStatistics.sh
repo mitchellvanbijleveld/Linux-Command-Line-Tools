@@ -328,7 +328,7 @@ PrintStatistics_Comparison_PerDate(){
             VAR_FAIL_DATE=1
             var_text_inbox="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedHam` = '$var_stats_inbox_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedHam` = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
                 var_text_inbox="REPAIR"
             fi
         fi
@@ -339,7 +339,7 @@ PrintStatistics_Comparison_PerDate(){
             VAR_FAIL_DATE=1
             var_text_spam="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedSpam` = '$var_stats_spam_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedSpam` = '$(echo $var_text_spam | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
                 var_text_spam="REPAIR"
             fi
         fi
@@ -350,7 +350,7 @@ PrintStatistics_Comparison_PerDate(){
             VAR_FAIL_DATE=1
             var_text_sent="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `sentHam` = '$var_stats_sent_fs' WHERE `stats_daily_volume`.`date` = '$date';"
+                DB_RepairRow "UPDATE `stats_daily_volume` SET `sentHam` = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
                 var_text_sent="REPAIR"
             fi
         fi
