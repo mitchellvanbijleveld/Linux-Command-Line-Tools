@@ -254,7 +254,7 @@ PrintStatistics_Comparison_PerMailBox(){
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["INBOX"]} | sed 's/^ *//')' WHERE stats.name = receivedHam;"
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["INBOX"]} | sed 's/^ *//')' WHERE stats.name = 'receivedHam';"
         fi
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
@@ -264,7 +264,7 @@ PrintStatistics_Comparison_PerMailBox(){
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SPAM"]} | sed 's/^ *//')' WHERE stats.name = receivedSpam;"
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SPAM"]} | sed 's/^ *//')' WHERE stats.name = 'receivedSpam';"
         fi
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
@@ -274,7 +274,7 @@ PrintStatistics_Comparison_PerMailBox(){
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SENT"]} | sed 's/^ *//')' WHERE stats.name = sentHam;"
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SENT"]} | sed 's/^ *//')' WHERE stats.name = 'sentHam';"
         fi
     fi
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Drafts : ?? : $(printf "%5d\n" ${VAR_STATISTICS["DRAFTS"]})"
