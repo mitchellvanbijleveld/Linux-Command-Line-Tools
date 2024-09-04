@@ -254,7 +254,7 @@ PrintStatistics_Comparison_PerMailBox(){
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["INBOX"]} | sed 's/^ *//')' WHERE stats.name = 'receivedHam';"
             if [[ $? -eq 0 ]]; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : REPAIRED"
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : OK : REPAIRED"
             else
                 VAR_STATISTICS_FAIL=1
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : REPAIR FAILED"
@@ -271,7 +271,7 @@ PrintStatistics_Comparison_PerMailBox(){
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SPAM"]} | sed 's/^ *//')' WHERE stats.name = 'receivedSpam';"
             if [[ $? -eq 0 ]]; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : REPAIRED"
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : OK : REPAIRED"
             else
                 VAR_STATISTICS_FAIL=1
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : REPAIR FAILED"
@@ -288,7 +288,7 @@ PrintStatistics_Comparison_PerMailBox(){
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SENT"]} | sed 's/^ *//')' WHERE stats.name = 'sentHam';"
             if [[ $? -eq 0 ]]; then
-                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : REPAIRED"
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : OK : REPAIRED"
             else
                 VAR_STATISTICS_FAIL=1
                 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : REPAIR FAILED"
