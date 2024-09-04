@@ -5,6 +5,8 @@ VAR_UTILITY_SCRIPT_VERSION="2024.07.12-1240"
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="basename echo find grep hostname mysql sort tree"
 
 VAR_STATISTICS_FAIL=0
+VAR_REPAIR_FAIL=0
+VAR_REPAIR_SUCCESS=0
 
 VAR_SYSTEM_MAIL_DIR="/var/qmail/mailnames"
 VAR_SYSTEM_HOSTNAME=$(hostname)
@@ -328,7 +330,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedHam = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_inbox="REPAIR"
+                    VAR_REPAIR_SUCCESS=0
                 else
+                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_inbox="RE FAIL"                   
@@ -346,7 +350,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_spam="REPAIR"
+                    VAR_REPAIR_SUCCESS=0
                 else
+                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_spam="RE FAIL"
@@ -364,7 +370,9 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET sentHam = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_sent="REPAIR"
+                    VAR_REPAIR_SUCCESS=0
                 else
+                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_sent="RE FAIL"
@@ -431,6 +439,14 @@ fi
 
 if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
     echo "verbose flag"
+fi
+
+if [[ $VAR_REPAIR_SUCCESS -eq 1]];
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script succesfully repaired database rows."
+fi
+
+if [[ $VAR_REPAIR_FAIL -eq 1]];
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script failed repairing database rows."
 fi
 
 if [[ $VAR_STATISTICS_FAIL -eq 0 ]]; then
