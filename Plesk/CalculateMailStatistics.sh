@@ -146,6 +146,11 @@ var_result_db_sentHam=$(echo $result_var_db_query_stats | awk '{print $8}')
 
 DB_RepairRow(){
     "$(which mysql)" -u root -D emailsecurity -Bse "$1"
+    if [[ $? -eq 0 ]]; then
+        VAR_REPAIR_SUCCESS=1
+    else
+        VAR_REPAIR_FAIL=1
+    fi
 }
 
 
@@ -248,6 +253,9 @@ PrintStatistics_Comparison_PerMailBox(){
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK"
+        if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["INBOX"]} | sed 's/^ *//')' WHERE stats.name = receivedHam;"
+        fi
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : OK : $(printf "%5d\n" ${VAR_STATISTICS["SPAM"]})"
@@ -255,6 +263,9 @@ PrintStatistics_Comparison_PerMailBox(){
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK"
+        if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SPAM"]} | sed 's/^ *//')' WHERE stats.name = receivedSpam;"
+        fi
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : OK : $(printf "%5d\n" ${VAR_STATISTICS["SENT"]})"
@@ -262,6 +273,9 @@ PrintStatistics_Comparison_PerMailBox(){
         VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK"
+        if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
+            DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SENT"]} | sed 's/^ *//')' WHERE stats.name = sentHam;"
+        fi
     fi
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Drafts : ?? : $(printf "%5d\n" ${VAR_STATISTICS["DRAFTS"]})"
     echoInfo 
@@ -330,9 +344,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedHam = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_inbox="REPAIR"
-                    VAR_REPAIR_SUCCESS=1
                 else
-                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_inbox="RE FAIL"                   
@@ -350,9 +362,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_spam="REPAIR"
-                    VAR_REPAIR_SUCCESS=1
                 else
-                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_spam="RE FAIL"
@@ -370,9 +380,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET sentHam = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_sent="REPAIR"
-                    VAR_REPAIR_SUCCESS=1
                 else
-                    VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
                     var_text_sent="RE FAIL"
