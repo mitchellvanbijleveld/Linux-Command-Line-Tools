@@ -330,7 +330,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedHam = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_inbox="REPAIR"
-                    VAR_REPAIR_SUCCESS=0
+                    VAR_REPAIR_SUCCESS=1
                 else
                     VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
@@ -350,7 +350,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_spam="REPAIR"
-                    VAR_REPAIR_SUCCESS=0
+                    VAR_REPAIR_SUCCESS=1
                 else
                     VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
@@ -370,7 +370,7 @@ PrintStatistics_Comparison_PerDate(){
                 DB_RepairRow "UPDATE stats_daily_volume SET sentHam = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_sent="REPAIR"
-                    VAR_REPAIR_SUCCESS=0
+                    VAR_REPAIR_SUCCESS=1
                 else
                     VAR_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
