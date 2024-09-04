@@ -324,34 +324,55 @@ PrintStatistics_Comparison_PerDate(){
         var_stats_inbox_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[$date]})
         var_stats_inbox_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_INBOX[$date]})
         if [[ $var_stats_inbox_db -ne $var_stats_inbox_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            VAR_FAIL_DATE=1
-            var_text_inbox="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedHam` = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
-                var_text_inbox="REPAIR"
+                DB_RepairRow "UPDATE stats_daily_volume SET receivedHam = '$(echo $var_stats_inbox_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
+                if [[ $? -eq 0 ]]; then
+                    var_text_inbox="REPAIR"
+                else
+                    VAR_STATISTICS_FAIL=1
+                    VAR_FAIL_DATE=1
+                    var_text_inbox="RE FAIL"                   
+                fi
+            else
+                VAR_STATISTICS_FAIL=1
+                VAR_FAIL_DATE=1
+                var_text_inbox="NOT OK"
             fi
         fi
         var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
         var_stats_spam_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM[$date]})
         if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            VAR_FAIL_DATE=1
-            var_text_spam="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `receivedSpam` = '$(echo $var_text_spam | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
-                var_text_spam="REPAIR"
+                DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
+                if [[ $? -eq 0 ]]; then
+                    var_text_spam="REPAIR"
+                else
+                    VAR_STATISTICS_FAIL=1
+                    VAR_FAIL_DATE=1
+                    var_text_spam="RE FAIL"
+                fi
+            else
+                VAR_STATISTICS_FAIL=1
+                VAR_FAIL_DATE=1
+                var_text_spam="NOT OK"
             fi
         fi
         var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
         var_stats_sent_fs=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT[$date]})
         if [[ $var_stats_sent_db -ne $var_stats_sent_fs ]]; then
-            VAR_STATISTICS_FAIL=1
-            VAR_FAIL_DATE=1
-            var_text_sent="NOT OK"
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE `stats_daily_volume` SET `sentHam` = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE `stats_daily_volume`.`date` = '$date';"
-                var_text_sent="REPAIR"
+                DB_RepairRow "UPDATE stats_daily_volume SET sentHam = '$(echo $var_stats_sent_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
+                if [[ $? -eq 0 ]]; then
+                    var_text_sent="REPAIR"
+                else
+                    VAR_STATISTICS_FAIL=1
+                    VAR_FAIL_DATE=1
+                    var_text_sent="RE FAIL"
+                fi
+            else
+                VAR_STATISTICS_FAIL=1
+                VAR_FAIL_DATE=1
+                var_text_sent="NOT OK"
             fi
         fi
         if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
