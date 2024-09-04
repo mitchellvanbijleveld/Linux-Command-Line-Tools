@@ -441,11 +441,11 @@ if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
     echo "verbose flag"
 fi
 
-if [[ $VAR_REPAIR_SUCCESS -eq 1]]; then
+if [[ $VAR_REPAIR_SUCCESS -eq 1 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script succesfully repaired database rows."
 fi
 
-if [[ $VAR_REPAIR_FAIL -eq 1]]; then
+if [[ $VAR_REPAIR_FAIL -eq 1 ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Script failed repairing database rows."
 fi
 
