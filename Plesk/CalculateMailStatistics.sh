@@ -250,31 +250,52 @@ PrintStatistics_Comparison_PerMailBox(){
     if [[ $var_result_db_receivedHam == ${VAR_STATISTICS["INBOX"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : OK : $(printf "%5d\n" ${VAR_STATISTICS["INBOX"]})"
     else
-        VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["INBOX"]} | sed 's/^ *//')' WHERE stats.name = 'receivedHam';"
+            if [[ $? -eq 0 ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : REPAIRED"
+            else
+                VAR_STATISTICS_FAIL=1
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : REPAIR FAILED"
+            fi
+        else
+            VAR_STATISTICS_FAIL=1
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK"
         fi
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : OK : $(printf "%5d\n" ${VAR_STATISTICS["SPAM"]})"
     else
-        VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SPAM"]} | sed 's/^ *//')' WHERE stats.name = 'receivedSpam';"
+            if [[ $? -eq 0 ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : REPAIRED"
+            else
+                VAR_STATISTICS_FAIL=1
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : REPAIR FAILED"
+            fi
+        else
+            VAR_STATISTICS_FAIL=1
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK"
         fi
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
         echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : OK : $(printf "%5d\n" ${VAR_STATISTICS["SENT"]})"
     else
-        VAR_STATISTICS_FAIL=1
         echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox (db vs fs) : $var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]}"
-        echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK"
         if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
             DB_RepairRow "UPDATE stats SET value = '$(echo ${VAR_STATISTICS["SENT"]} | sed 's/^ *//')' WHERE stats.name = 'sentHam';"
+            if [[ $? -eq 0 ]]; then
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : REPAIRED"
+            else
+                VAR_STATISTICS_FAIL=1
+                echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : REPAIR FAILED"
+            fi
+        else
+            VAR_STATISTICS_FAIL=1
+            echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK"
         fi
     fi
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Drafts : ?? : $(printf "%5d\n" ${VAR_STATISTICS["DRAFTS"]})"
