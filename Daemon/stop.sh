@@ -2,7 +2,7 @@
 VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Stop"
 VAR_UTILITY_SCRIPT_VERSION="2024.XX.XX-XXXX"
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo sed"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo kill sed"
 
 # Utility Script Variables
 VAR_DAEMON_NAME="$1"
@@ -22,16 +22,12 @@ if [[ ! -f "$VAR_DAEMON_CONFIG_FILE" ]]; then
     exit 1
 fi
 
-if [[ -f "$VAR_DAEMON_PID_FILE" ]]; then
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' already running. Exiting..."
-    VAR_PID=$(cat "$VAR_DAEMON_PID_FILE")
-    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID = $VAR_PID"
-    #exit 1
+if [[ ! -f "$VAR_DAEMON_PID_FILE" ]]; then
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' not running. Exiting..."
+    exit 1
 fi
 
+VAR_PID=$(cat "$VAR_DAEMON_PID_FILE")
+echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID = $VAR_PID"
 kill $VAR_PID
 rm "$VAR_DAEMON_PID_FILE"
-
-
-
-
