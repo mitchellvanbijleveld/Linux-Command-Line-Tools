@@ -27,7 +27,11 @@ if [[ -f "$VAR_DAEMON_PID_FILE" ]]; then
     exit 1
 fi
 
-bash "$VAR_DAEMON_CONFIG_FILE" &
+StartDaemon() {
+    bash "$VAR_DAEMON_CONFIG_FILE"
+}
+
+StartDaemon &
 VAR_PID=$!
 echo $VAR_PID > "$VAR_DAEMON_PID_FILE"
 echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID = $VAR_PID"
