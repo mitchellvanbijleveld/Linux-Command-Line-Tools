@@ -1,8 +1,8 @@
 #!/bin/bash
 VAR_UTILITY="Daemon"
 VAR_UTILITY_SCRIPT="Start"
-VAR_UTILITY_SCRIPT_VERSION="2024.XX.XX-XXXX"
-VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo sed"
+VAR_UTILITY_SCRIPT_VERSION="2024.09.09-2048"
+VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo sed tmux"
 
 # Utility Script Variables
 VAR_DAEMON_NAME="$1"
@@ -27,11 +27,6 @@ if [[ -f "$VAR_DAEMON_PID_FILE" ]]; then
     exit 1
 fi
 
-StartDaemon() {
-    bash "$VAR_DAEMON_CONFIG_FILE"
-}
-
-StartDaemon &
-VAR_PID=$!
-echo $VAR_PID > "$VAR_DAEMON_PID_FILE"
-echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "PID = $VAR_PID"
+tmux new-session -d -s $VAR_DAEMON_NAME $(which bash) $VAR_DAEMON_CONFIG_FILE
+touch $VAR_DAEMON_PID_FILE
+exit 0
