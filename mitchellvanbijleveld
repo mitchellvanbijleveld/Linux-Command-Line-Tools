@@ -120,7 +120,7 @@ if ! [ $(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d) ]; then
 fi
 
 # Adjust the utility real path with the find parameter.
-VAR_UTILITY_FOLDER_PATH=$(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d)
+export VAR_UTILITY_FOLDER_PATH=$(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d)
 
 # Check if Utility Script is empty.
 if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
