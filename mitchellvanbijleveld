@@ -101,8 +101,10 @@ die_UtilityScriptNotFound (){
     echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
     echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
-        var_utility_script=$(basename $var_utility_script_real_path)
-        echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
+        if [ -f  "$var_utility_script_real_path" ]; then
+            var_utility_script=$(basename $var_utility_script_real_path)
+            echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
+        fi
     done
     exit 1
 }
