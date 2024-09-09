@@ -17,7 +17,7 @@ fi
 echo $VAR_DAEMON_CONFIG_FILE
 echo $VAR_DAEMON_EXAMPLE_FILE
 
-if [[ -f "$VAR_DAEMON_CONFIG_FILE" ]]; then
+if [[ -f "$VAR_DAEMON_CONFIG_FILE" ]] && [[ $@ != *"--replace"* ]]; then
     echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' already installed. Exiting..."
     exit 1
 fi
