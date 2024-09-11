@@ -29,10 +29,10 @@ fi
 
 # Check Dependencies
 echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
-VAR_LINE_DEPENDENCIES=$(grep '^REQUIRED_COMMAND_LINE_TOOLS=' "$VAR_DAEMON_CONFIG_FILE")
+VAR_LINE_DEPENDENCIES=$(grep '^VAR_DAEMON_REQUIRED_COMMAND_LINE_TOOLS=' "$VAR_DAEMON_CONFIG_FILE")
 eval "$VAR_LINE_DEPENDENCIES"
-echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting dependency check script for '$REQUIRED_COMMAND_LINE_TOOLS'..."
-"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
+echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting dependency check script for '$VAR_DAEMON_REQUIRED_COMMAND_LINE_TOOLS'..."
+"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_DAEMON_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 tmux new-session -d -s $VAR_DAEMON_NAME $(which bash) $VAR_DAEMON_CONFIG_FILE
 touch $VAR_DAEMON_PID_FILE
