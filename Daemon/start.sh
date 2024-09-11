@@ -35,5 +35,8 @@ echoDebug "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting dependency check script
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_DAEMON_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 tmux new-session -d -s $VAR_DAEMON_NAME $(which bash) $VAR_DAEMON_CONFIG_FILE
-touch $VAR_DAEMON_PID_FILE
+
+VAR_LINE_DAEMON_VERSION=$(grep '^VAR_DAEMON_VERSION=' "$VAR_DAEMON_CONFIG_FILE")
+eval "$VAR_LINE_DAEMON_VERSION"
+echo "$VAR_DAEMON_VERSION" > "$VAR_DAEMON_PID_FILE"
 exit 0
