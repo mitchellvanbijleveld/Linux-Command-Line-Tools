@@ -376,7 +376,7 @@ PrintStatistics_Comparison_PerDate(){
             else
                 VAR_STATISTICS_FAIL=1
                 VAR_FAIL_DATE=1
-                var_text_inbox="NOT OK"
+                var_text_inbox="NOT OK ($var_stats_inbox_db vs $var_stats_inbox_fs)"
             fi
         fi
         var_stats_spam_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SPAM_DB[$date]})
@@ -396,7 +396,7 @@ PrintStatistics_Comparison_PerDate(){
             else
                 VAR_STATISTICS_FAIL=1
                 VAR_FAIL_DATE=1
-                var_text_spam="NOT OK"
+                var_text_spam="NOT OK ($var_stats_spam_db vs $var_stats_spam_fs)"
             fi
         fi
         var_stats_sent_db=$(printf "%5d\n" ${VAR_STATISTICS_MAIL_PER_DATE_SENT_DB[$date]})
@@ -416,7 +416,7 @@ PrintStatistics_Comparison_PerDate(){
             else
                 VAR_STATISTICS_FAIL=1
                 VAR_FAIL_DATE=1
-                var_text_sent="NOT OK"
+                var_text_sent="NOT OK ($var_stats_sent_db vs $var_stats_sent_fs)"
             fi
         fi
         if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
