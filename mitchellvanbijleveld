@@ -8,22 +8,32 @@ export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
 ##################################################
 
 export VAR_SCRIPT_DEBUG=false
-VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/^ *//; s/ \{2,\}/ /g") # replace --debug, single space and two spaces with nothing
+VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
 export VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
 export VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
-VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//g; s/$VAR_UTILITY//; s/$VAR_UTILITY_SCRIPT//; s/^ *//; s/ $//")
+VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//gi; s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
 
-# Check Debug
-if [[ "$@" == *"--DEBUG"* ]]; then
-    export VAR_SCRIPT_DEBUG=true
-    echo "DEBUG ENABLED"
-    echo " - Script Arguments          : $@"
-    echo " - Script Argumgnets - Flags : $VAR_SCRIPT_ARGUMENTS"
-    echo " - Utility                   : $VAR_UTILITY"
-    echo " - Utility Script            : $VAR_UTILITY_SCRIPT"
-    echo " - Utility Script Arguments  : $VAR_UTILITY_SCRIPT_ARGUMENTS"
-    echo ""
-fi
+PrintLogLine(){
+    echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$2"
+}
+
+PrintMessage(){
+    echo_var_utility="$2"
+    echo_var_utility_script="$3"
+    echo_var_message="$4"
+    if [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ "$4" == "" ]] && $VAR_SCRIPT_DEBUG; then
+        return 0 # stop function
+    elif [[ "$4" == "" ]]; then
+        echo_var_message="$2 $3"
+        echo_var_utility=""
+        echo_var_utility_script=""
+    fi
+    if $VAR_SCRIPT_DEBUG; then
+        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$echo_var_message"
+    fi
+}
+
+export -f PrintMessage
 
 # Function echoDebug()
 # Prints messages if VAR_SCRIPT_DEBUG=true.
@@ -39,7 +49,7 @@ echoDebug () {
         echo_var_utility_script=""
     fi
     if $VAR_SCRIPT_DEBUG; then
-        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s\n" "$echo_var_utility/$echo_var_utility_script")" "[DEBUG]" ":" "$echo_var_message"
+        PrintLogLine "DEBUG" "$echo_var_message"
     fi
 }
 
@@ -59,7 +69,7 @@ echoInfo () {
         echo_var_utility_script=""
     fi
     if $VAR_SCRIPT_DEBUG; then
-        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s\n" "$echo_var_utility/$echo_var_utility_script")" "[ INFO]" ":" "$echo_var_message"
+        PrintLogLine "INFO" "$echo_var_message"
     else
         echo "$echo_var_message"
     fi
@@ -67,29 +77,50 @@ echoInfo () {
 
 export -f echoInfo
 
+if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space:]]|$) ]]; then
+    export VAR_SCRIPT_DEBUG=true
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "DEBUG ENABLED"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Full Argument List                 : '$@'"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Argument List --- Flags            : '$VAR_SCRIPT_ARGUMENTS'"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility                            : '$VAR_UTILITY'"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script                     : '$VAR_UTILITY_SCRIPT'"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Arguments Passed To Utility Script : '$VAR_UTILITY_SCRIPT_ARGUMENTS'"
+    PrintMessage "DEBUG"
+fi
+
+# Check Debug
+for BinArgument in $@; do
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking argument $BinArgument"
+done
+
+
+
+
+
+
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
 VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
 export VAR_BIN_INSTALL_DIR=$VAR_SCRIPT_DIR_NAME
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
-echoDebug
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
+PrintMessage "DEBUG"
 
 VAR_UTILITY_FOLDER_PATH="$VAR_SCRIPT_DIR_NAME/$VAR_UTILITY"
 VAR_UTILITY_SCRIPT_REAL_PATH="$VAR_UTILITY_FOLDER_PATH/$VAR_UTILITY_SCRIPT.sh"
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
-echoDebug
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
+PrintMessage "DEBUG"
 
 
 # Function die_UtilityNotFound()
 # Exits the script if utility does not exist.
 die_UtilityNotFound () {
-    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
-    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
         if [ -d  "$var_utility_dir" ]; then
         var_utility=$(basename $var_utility_dir)
-        echoInfo "$SELF_VAR_UTILITY" "$VSELF_AR_UTILITY_SCRIPT" " - $var_utility"
+        PrintMessage "INFO" "$SELF_VAR_UTILITY" "$VSELF_AR_UTILITY_SCRIPT" " - $var_utility"
         fi
     done
     exit 1
@@ -98,12 +129,12 @@ die_UtilityNotFound () {
 # Function die_UtilityScriptNotFound()
 # Exits the script if utility script does not exist.
 die_UtilityScriptNotFound (){
-    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
-    echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
         if [ -f  "$var_utility_script_real_path" ]; then
             var_utility_script=$(basename $var_utility_script_real_path)
-            echoInfo "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
+            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
         fi
     done
     exit 1
@@ -136,10 +167,10 @@ fi
 VAR_UTILITY_SCRIPT_REAL_PATH=$(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
 
 # Check Dependencies
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
 VAR_LINE_DEPENDENCIES=$(grep '^VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS=' "$VAR_UTILITY_SCRIPT_REAL_PATH")
 eval "$VAR_LINE_DEPENDENCIES"
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check script for '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check script for '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 # Export vars usable by the script
@@ -155,6 +186,6 @@ mkdir -p "$VAR_UTILITY_SCRIPT_CONFIG_DIR"
 mkdir -p "$VAR_UTILITY_SCRIPT_TEMP_DIR"
 
 # Start the utility script with arguments.
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
-echoDebug "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$(ls -al $VAR_UTILITY_SCRIPT_REAL_PATH)"
 "$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
