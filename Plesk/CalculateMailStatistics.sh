@@ -423,7 +423,7 @@ PrintStatistics_Comparison_PerDate(){
                 var_text_sent="NOT OK ($var_stats_sent_db vs $var_stats_sent_fs)"
             fi
         fi
-        if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] && [[ $CurrentRowFail -eq 1]]; then
+        if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] && [[ $CurrentRowFail -eq 1 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
         fi
     done
