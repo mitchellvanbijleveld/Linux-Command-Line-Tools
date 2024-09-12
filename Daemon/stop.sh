@@ -27,6 +27,13 @@ if [[ ! -f "$VAR_DAEMON_PID_FILE" ]]; then
     exit 1
 fi
 
-tmux kill-session -t $VAR_DAEMON_NAME
+if [[ $(echo $2 | tr '[:lower:]' '[:upper:]') == "--FORCE" ]]; then
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Killing '$VAR_DAEMON_NAME'..."
+    tmux kill-session -t $VAR_DAEMON_NAME
+else
+    echoInfo "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Stopping '$VAR_DAEMON_NAME'..."
+    tmux send-keys -t $VAR_DAEMON_NAME C-c
+fi
+
 rm $VAR_DAEMON_PID_FILE
 exit 0
