@@ -320,13 +320,13 @@ PrintStatistics_Comparison_PerEmailAddress(){
         PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent  (db vs fs) : $string_sent_db vs $string_sent_fs"
 
         if [[ $string_total_db == $string_total_fs ]] && [[ $string_inbox_db == $string_inbox_fs ]] && [[ $string_spam_db == $string_spam_fs ]] && [[ $string_sent_db == $string_sent_fs ]]; then
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " -     OK: $(echo "$email_address" | awk '{print $1}')"
             fi
         else
             FAIL_EMAILADDRESS=1
             VAR_STATISTICS_FAIL=1
-            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || $VAR_SCRIPT_DEBUG; then
+            if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] || [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
                 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - NOT OK: $(echo "$email_address" | awk '{print $1}')"
             fi
         fi
