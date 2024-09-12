@@ -163,7 +163,7 @@ PrintStatistics_FileSystem_PerMailBox(){
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Spam   : ${VAR_STATISTICS["SPAM"]}"
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Sent   : ${VAR_STATISTICS["SENT"]}"
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Total Mail Count      Drafts : ${VAR_STATISTICS["DRAFTS"]}"
-    PrintMessage "INFO" 
+    PrintMessage
 }
 PrintStatistics_FileSystem_PerEmailAddress(){
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Total Amount Of Email Addresses (File System) : $(ls $VAR_SCRIPT_STATISTICS_DIR | grep -c '@')"
@@ -214,7 +214,7 @@ PrintStatistics_Database_PerEmailAddress(){
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - $(echo "$email_address" | awk '{print $1}'): "
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $string_total (Inbox: $string_inbox, Spam: $string_spam, Sent: $string_sent)"
     done <<< "$result_var_db_query_stats_accounts"
-    PrintMessage "INFO"  
+    PrintMessage
 }
 PrintStatistics_Database_PerDate(){
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Statistics Per Date (Database):"
@@ -299,7 +299,7 @@ PrintStatistics_Comparison_PerMailBox(){
         fi
     fi
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Drafts : ?? : $(printf "%5d\n" ${VAR_STATISTICS["DRAFTS"]})"
-    PrintMessage "INFO" 
+    PrintMessage
 }
 PrintStatistics_Comparison_PerEmailAddress(){
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "# Comparison per email address"
