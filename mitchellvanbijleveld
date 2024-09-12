@@ -7,7 +7,7 @@ export VAR_BIN_CONFIG_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
 export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
 ##################################################
 
-export VAR_SCRIPT_DEBUG=false
+export VAR_SCRIPT_DEBUG=0
 VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
 export VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
 export VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
@@ -17,19 +17,28 @@ PrintLogLine(){
     echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$2"
 }
 
+export -f PrintLogLine
+
 PrintMessage(){
-    echo_var_utility="$2"
-    echo_var_utility_script="$3"
-    echo_var_message="$4"
-    if [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ "$4" == "" ]] && $VAR_SCRIPT_DEBUG; then
-        return 0 # stop function
-    elif [[ "$4" == "" ]]; then
-        echo_var_message="$2 $3"
-        echo_var_utility=""
-        echo_var_utility_script=""
-    fi
-    if $VAR_SCRIPT_DEBUG; then
-        echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$echo_var_message"
+    # $1 = Log Level
+    # $2 = Utility
+    # $3 = Script
+    # $4 = Message
+    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ "$4" == "" ]]; then ### IF ALL ARGUMENTS ARE EMPTY
+        case $VAR_SCRIPT_DEBUG in
+            0) echo; return 0;; # Print empty line in *** non *** debugging mode
+            1) return 0;; # Print nothing in debugging mode
+        esac
+    elif [[ "$1" != "" ]] && [[ "$2" != "" ]] && [[ "$3" != "" ]] && [[ "$4" != "" ]]; then ### IF ALL ARGUMENTS HAVE A VALUE
+        case $VAR_SCRIPT_DEBUG in
+            0) 
+                case $1 in
+                    "DEBUG") return 0;;
+                    "INFO") echo $4; return 0;;
+                esac
+                ;;
+            1) echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$2/$3")" "[$(printf "%5s" "$1")]" ":" "$4"; return 0;;
+        esac
     fi
 }
 
@@ -41,14 +50,14 @@ echoDebug () {
     echo_var_utility="$1"
     echo_var_utility_script="$2"
     echo_var_message="$3"
-    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && $VAR_SCRIPT_DEBUG; then
+    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
         return 0 # stop function
     elif [[ "$3" == "" ]]; then
         echo_var_message="$1 $2"
         echo_var_utility=""
         echo_var_utility_script=""
     fi
-    if $VAR_SCRIPT_DEBUG; then
+    if [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
         PrintLogLine "DEBUG" "$echo_var_message"
     fi
 }
@@ -61,14 +70,14 @@ echoInfo () {
     echo_var_utility="$1"
     echo_var_utility_script="$2"
     echo_var_message="$3"
-    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && $VAR_SCRIPT_DEBUG; then
+    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
         return 0 # stop function
     elif [[ "$3" == "" ]]; then
         echo_var_message="$1 $2"
         echo_var_utility=""
         echo_var_utility_script=""
     fi
-    if $VAR_SCRIPT_DEBUG; then
+    if [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
         PrintLogLine "INFO" "$echo_var_message"
     else
         echo "$echo_var_message"
@@ -78,14 +87,14 @@ echoInfo () {
 export -f echoInfo
 
 if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space:]]|$) ]]; then
-    export VAR_SCRIPT_DEBUG=true
+    export VAR_SCRIPT_DEBUG=1
+    StringWithArguments="$@"
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "DEBUG ENABLED"
-    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Full Argument List                 : '$@'"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Full Argument List                 : '$StringWithArguments'"
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Argument List --- Flags            : '$VAR_SCRIPT_ARGUMENTS'"
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility                            : '$VAR_UTILITY'"
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script                     : '$VAR_UTILITY_SCRIPT'"
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Arguments Passed To Utility Script : '$VAR_UTILITY_SCRIPT_ARGUMENTS'"
-    PrintMessage "DEBUG"
 fi
 
 # Check Debug
@@ -93,8 +102,9 @@ for BinArgument in $@; do
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking argument $BinArgument"
 done
 
-
-
+PrintMessage
+PrintMessage
+PrintMessage
 
 
 
@@ -103,14 +113,11 @@ VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
 export VAR_BIN_INSTALL_DIR=$VAR_SCRIPT_DIR_NAME
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Real Path : $VAR_SCRIPT_REAL_PATH"
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Script Dir Name  : $VAR_SCRIPT_DIR_NAME"
-PrintMessage "DEBUG"
 
 VAR_UTILITY_FOLDER_PATH="$VAR_SCRIPT_DIR_NAME/$VAR_UTILITY"
 VAR_UTILITY_SCRIPT_REAL_PATH="$VAR_UTILITY_FOLDER_PATH/$VAR_UTILITY_SCRIPT.sh"
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Folder Path : $VAR_UTILITY_FOLDER_PATH"
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility Script Path  : $VAR_UTILITY_SCRIPT_REAL_PATH"
-PrintMessage "DEBUG"
-
 
 # Function die_UtilityNotFound()
 # Exits the script if utility does not exist.
