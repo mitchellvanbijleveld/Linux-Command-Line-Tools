@@ -260,7 +260,7 @@ PrintStatistics_Comparison_PerMailBox(){
             fi
         else
             VAR_STATISTICS_FAIL=1
-            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK"
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Inbox  : NOT OK ($var_result_db_receivedHam vs ${VAR_STATISTICS["INBOX"]})"
         fi
     fi
     if [[ $var_result_db_receivedSpam == ${VAR_STATISTICS["SPAM"]} ]]; then
@@ -277,7 +277,7 @@ PrintStatistics_Comparison_PerMailBox(){
             fi
         else
             VAR_STATISTICS_FAIL=1
-            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK"
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Spam   : NOT OK ($var_result_db_receivedSpam vs ${VAR_STATISTICS["SPAM"]})"
         fi
     fi
     if [[ $var_result_db_sentHam == ${VAR_STATISTICS["SENT"]} ]]; then
@@ -294,7 +294,7 @@ PrintStatistics_Comparison_PerMailBox(){
             fi
         else
             VAR_STATISTICS_FAIL=1
-            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK"
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Sent   : NOT OK ($var_result_db_sentHam vs ${VAR_STATISTICS["SENT"]})"
         fi
     fi
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Drafts : ?? : $(printf "%5d\n" ${VAR_STATISTICS["DRAFTS"]})"
