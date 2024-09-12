@@ -120,7 +120,6 @@ for var_domain in "$VAR_SYSTEM_MAIL_DIR"/*; do
         fi
     done
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done!"
-    PrintMessage
 done
 
 
