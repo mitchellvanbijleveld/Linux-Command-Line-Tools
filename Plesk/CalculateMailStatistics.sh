@@ -354,6 +354,7 @@ PrintStatistics_Comparison_PerDate(){
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" " - Date       : Inbox  | Spam   | Sent   "
     fi
     for date in $(for date in "${!VAR_STATISTICS_MAIL_PER_DATE_INBOX_DB[@]}"; do echo "$date"; done | sort); do
+        CurrentRowFail=0
         # Reset Status Text per date.
         var_text_inbox="  OK  "
         var_text_spam="  OK  "
@@ -376,6 +377,7 @@ PrintStatistics_Comparison_PerDate(){
             else
                 VAR_STATISTICS_FAIL=1
                 VAR_FAIL_DATE=1
+                CurrentRowFail=1
                 var_text_inbox="NOT OK ($var_stats_inbox_db vs $var_stats_inbox_fs)"
             fi
         fi
@@ -396,6 +398,7 @@ PrintStatistics_Comparison_PerDate(){
             else
                 VAR_STATISTICS_FAIL=1
                 VAR_FAIL_DATE=1
+                CurrentRowFail=1
                 var_text_spam="NOT OK ($var_stats_spam_db vs $var_stats_spam_fs)"
             fi
         fi
@@ -411,6 +414,7 @@ PrintStatistics_Comparison_PerDate(){
                     VAR_DATE_REPAIR_FAIL=1
                     VAR_STATISTICS_FAIL=1
                     VAR_FAIL_DATE=1
+                    CurrentRowFail=1
                     var_text_sent="RE FAIL"
                 fi
             else
@@ -419,7 +423,7 @@ PrintStatistics_Comparison_PerDate(){
                 var_text_sent="NOT OK ($var_stats_sent_db vs $var_stats_sent_fs)"
             fi
         fi
-        if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]]; then
+        if [[ $VAR_SCRIPT_VERBOSE -eq 1 ]] && [[ $CurrentRowFail -eq 1]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "   $date : $var_text_inbox | $var_text_spam | $var_text_sent "
         fi
     done
