@@ -102,12 +102,6 @@ for BinArgument in $@; do
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking argument $BinArgument"
 done
 
-PrintMessage
-PrintMessage
-PrintMessage
-
-
-
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
 VAR_SCRIPT_DIR_NAME=$(dirname $VAR_SCRIPT_REAL_PATH)
 export VAR_BIN_INSTALL_DIR=$VAR_SCRIPT_DIR_NAME
