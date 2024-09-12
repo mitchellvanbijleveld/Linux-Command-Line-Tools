@@ -386,7 +386,7 @@ PrintStatistics_Comparison_PerDate(){
         if [[ $var_stats_spam_db -ne $var_stats_spam_fs ]]; then
             CurrentRowFail=1
             if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-                DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_text_spam | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
+                DB_RepairRow "UPDATE stats_daily_volume SET receivedSpam = '$(echo $var_stats_spam_fs | sed 's/^ *//')' WHERE stats_daily_volume.date = '$date';"
                 if [[ $? -eq 0 ]]; then
                     var_text_spam="REPAIR"
                     VAR_DATE_REPAIR=1
