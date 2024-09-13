@@ -34,7 +34,7 @@ PrintMessage(){
             0) 
                 case $1 in
                     "DEBUG") return 0;;
-                    "INFO") echo $4; return 0;;
+                    "INFO") echo "$4"; return 0;;
                 esac
                 ;;
             1) echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$2/$3")" "[$(printf "%5s" "$1")]" ":" "$4"; return 0;;
@@ -120,8 +120,8 @@ die_UtilityNotFound () {
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
         if [ -d  "$var_utility_dir" ]; then
-        var_utility=$(basename $var_utility_dir)
-        PrintMessage "INFO" "$SELF_VAR_UTILITY" "$VSELF_AR_UTILITY_SCRIPT" " - $var_utility"
+            var_utility=$(basename $var_utility_dir)
+            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - $var_utility"
         fi
     done
     exit 1
@@ -135,7 +135,7 @@ die_UtilityScriptNotFound (){
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
         if [ -f  "$var_utility_script_real_path" ]; then
             var_utility_script=$(basename $var_utility_script_real_path)
-            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - ${var_utility_script%.sh}"
+            PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - ${var_utility_script%.sh}"
         fi
     done
     exit 1
