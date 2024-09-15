@@ -119,7 +119,7 @@ die_UtilityNotFound () {
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
-        if [ -d  "$var_utility_dir" ]; then
+        if [[ -d  "$var_utility_dir" ]]; then
             var_utility=$(basename $var_utility_dir)
             PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - $var_utility"
         fi
@@ -133,7 +133,7 @@ die_UtilityScriptNotFound (){
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
-        if [ -f  "$var_utility_script_real_path" ]; then
+        if [[ -f  "$var_utility_script_real_path" ]]; then
             var_utility_script=$(basename $var_utility_script_real_path)
             PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "  - ${var_utility_script%.sh}"
         fi
@@ -147,7 +147,7 @@ if [[ "$VAR_UTILITY" == "" ]]; then
 fi
 
 # Check if Utility exists.
-if ! [ $(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d) ]; then
+if ! [[ $(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d) ]]; then
     die_UtilityNotFound "The '$VAR_UTILITY' utility was not found!"
 fi
 
@@ -160,7 +160,7 @@ if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
 fi
 
 # Check if Utility Script exists.
-if ! [ $(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f) ]; then
+if ! [[ $(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f) ]]; then
     die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
 fi
 
