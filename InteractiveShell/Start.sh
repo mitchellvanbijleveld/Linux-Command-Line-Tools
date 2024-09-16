@@ -62,6 +62,7 @@ PrintDirectoryContent(){ # NOT USED AT THE MOMENT! MIGHT BE USEFUL IN THE FUTURE
         DirectoryContent+=("$FoundItem")
     done
 }
+export -f PrintDirectoryContent
 
 PrintAvailableUtilities(){
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Listing contents of directory '$VAR_BIN_INSTALL_DIR/'..."
