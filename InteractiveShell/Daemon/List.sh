@@ -1,5 +1,3 @@
-echo "Welcome to the Interactive Shell for Daemon/List!"
-echo
 echo "Please select on of the following options:"
 echo "  [ 1] All"
 echo "  [ 2] Examples"
