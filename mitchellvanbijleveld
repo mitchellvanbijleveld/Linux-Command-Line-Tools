@@ -118,6 +118,7 @@ PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" " - Utility 
 die_UtilityNotFound () {
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The bin '$(basename $0)' supports the following utilities:"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Searching for utilities in '$VAR_SCRIPT_DIR_NAME'..."
     for var_utility_dir in "$VAR_SCRIPT_DIR_NAME"/*; do
         if [[ -d  "$var_utility_dir" ]]; then
             var_utility=$(basename $var_utility_dir)
@@ -132,6 +133,7 @@ die_UtilityNotFound () {
 die_UtilityScriptNotFound (){
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "$1"
     PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility '$VAR_UTILITY' supports the following scripts:"
+    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Searching for scripts in '$VAR_UTILITY_FOLDER_PATH'..."
     for var_utility_script_real_path in "$VAR_UTILITY_FOLDER_PATH"/*; do
         if [[ -f  "$var_utility_script_real_path" ]]; then
             var_utility_script=$(basename $var_utility_script_real_path)
