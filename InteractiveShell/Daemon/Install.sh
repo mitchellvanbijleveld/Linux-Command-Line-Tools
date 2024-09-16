@@ -1,11 +1,12 @@
 echo "Please select on of the following options:"
 PrintDirectoryContent "FILES" "$VAR_BIN_INSTALL_DIR/Daemon/Examples"
+if [[ ${#DirectoryContent[@]} -eq 0 ]]; then
+    echo "  No example daemons are available to install."
+fi
 echo
 echo "Available choices:"; AvailableChoices_Reset
 if [[ ${#DirectoryContent[@]} -gt 0 ]]; then
     AvailableChoices_Add "1-${#DirectoryContent[@]}" "Daemon to install"
-else
-    echo "  No example daemons are available to install."
 fi
 AvailableChoices_Add "B" "Back"
 AvailableChoices_Add "Q" "Quit Interactive Shell"

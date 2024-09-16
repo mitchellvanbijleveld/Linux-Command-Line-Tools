@@ -1,11 +1,12 @@
 echo "Please select on of the following options:"
 PrintDirectoryContent "FILES" "$(echo "$VAR_UTILITY_SCRIPT_CONFIG_DIR" | sed "s/InteractiveShell/$VAR_UTILITY/; s/Start//")"
+if [[ ${#DirectoryContent[@]} -eq 0 ]]; then
+    echo "  No daemons are installed."
+fi
 echo
 echo "Available choices:"; AvailableChoices_Reset
 if [[ ${#DirectoryContent[@]} -gt 0 ]]; then
     AvailableChoices_Add "1-${#DirectoryContent[@]}" "Daemon to install"
-else
-    echo "  No daemons are installed."
 fi
 AvailableChoices_Add "B" "Back"
 AvailableChoices_Add "Q" "Quit Interactive Shell"
