@@ -145,7 +145,8 @@ die_UtilityScriptNotFound (){
 
 # Check if Utility is empty.
 if [[ "$VAR_UTILITY" == "" ]]; then
-    die_UtilityNotFound "No utility specified!"
+    #die_UtilityNotFound "No utility specified!"
+    "$VAR_SCRIPT_REAL_PATH" "InteractiveShell" "Start"
 fi
 
 # Check if Utility exists.
