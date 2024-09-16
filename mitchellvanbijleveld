@@ -154,7 +154,11 @@ if ! [[ $(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d) ]]; then
 fi
 
 # Adjust the utility real path with the find parameter.
-export VAR_UTILITY_FOLDER_PATH=$(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d)
+if [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "INTERACTIVESHELL" ]]; then
+    export VAR_UTILITY_FOLDER_PATH=$(find $VAR_SCRIPT_DIR_NAME -iname "$VAR_UTILITY" -type d)
+else
+    export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME" -path "$VAR_SCRIPT_DIR_NAME/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
+fi
 
 # Check if Utility Script is empty.
 if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
