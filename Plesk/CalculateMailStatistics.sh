@@ -429,9 +429,7 @@ PrintStatistics_Comparison_PerDate(){
     done
 
     if [[ $VAR_SCRIPT_REPAIR_DB -eq 1 ]]; then
-        if [[ $VAR_DATE_REPAIR -eq 0 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
-            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOTHING NEEDED A REPAIR"
-        elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
+        if [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK"
         elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK & NOT OK (some succeeded, some failed)"
