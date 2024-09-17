@@ -11,7 +11,9 @@ export VAR_SCRIPT_DEBUG=0
 VAR_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
 export VAR_UTILITY=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $1}')
 export VAR_UTILITY_SCRIPT=$(echo "$VAR_SCRIPT_ARGUMENTS" | awk '{print $2}')
-VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//gi; s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
+if [[ $VAR_UTILITY != "" ]] && [[ $VAR_UTILITY_SCRIPT != "" ]]; then
+    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//gi; s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
+fi
 
 PrintLogLine(){
     echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$2"
