@@ -428,21 +428,22 @@ PrintStatistics_Comparison_PerDate(){
         fi
     done
 
+    if [[ $VAR_DATE_REPAIR -eq 0 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOTHING NEEDED A REPAIR"
+    elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK"
+    elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK & NOT OK (some succeeded, some failed)"
+    elif [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
+        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR NOT OK"
+    fi
+
     if [[ $VAR_FAIL_DATE -eq 1 ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
     elif [[ $VAR_FAIL_DATE -eq 0 ]]; then
         PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
     fi
 
-    if [[ $VAR_DATE_REPAIR -eq 0 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOTHING TO REPAIR"
-    elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 0 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK"
-    elif [[ $VAR_DATE_REPAIR -eq 1 ]] && [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR OK & NOT OK (some succeed, some failed)"
-    elif [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR NOT OK"
-    fi
     PrintMessage
 }
 PrintStatistics_Comparison(){
