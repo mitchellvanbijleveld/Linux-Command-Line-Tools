@@ -68,7 +68,7 @@ PrintAvailableUtilities(){
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Listing contents of directory '$VAR_BIN_INSTALL_DIR/'..."
     AvailableUtilities=()
     for DirectoryContent in "$VAR_BIN_INSTALL_DIR/"*; do
-        if [[ -d $DirectoryContent ]]; then
+        if [[ -d $DirectoryContent ]] && [[ $(basename $DirectoryContent) != "InteractiveShell" ]]; then
             AvailableUtilities+=("$DirectoryContent")
             echo "  [$(printf '%2d\n' ${#AvailableUtilities[@]})] $(basename $DirectoryContent)"
         fi
