@@ -159,9 +159,9 @@ fi
 
 # Adjust the utility real path with the find parameter.
 if [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "HELP" ]]; then
-    export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME" -path "$VAR_SCRIPT_DIR_NAME/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
+    export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME/Help" -iname "$VAR_UTILITY" -type d -print)
 elif [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "INTERACTIVESHELL" ]]; then
-    export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME" -path "$VAR_SCRIPT_DIR_NAME/Help" -prune -o -iname "$VAR_UTILITY" -type d -print)
+    export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME/InteractiveShell" -iname "$VAR_UTILITY" -type d -print)
 else
     export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_SCRIPT_DIR_NAME" -path "$VAR_SCRIPT_DIR_NAME/Help" -prune -o -path "$VAR_SCRIPT_DIR_NAME/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
 fi
