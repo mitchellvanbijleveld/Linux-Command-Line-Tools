@@ -1,5 +1,5 @@
 echo "Please select on of the following options:"
-PrintDirectoryContent "FILES" "$(echo "$VAR_UTILITY_SCRIPT_CONFIG_DIR" | sed "s/InteractiveShell/$VAR_UTILITY/; s/Start//")"
+PrintDirectoryContent "FILES" "$VAR_BIN_CONFIG_DIR/$VAR_UTILITY"
 if [[ ${#DirectoryContent[@]} -eq 0 ]]; then
     echo "  No daemons are installed."
 fi
