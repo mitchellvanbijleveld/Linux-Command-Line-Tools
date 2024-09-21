@@ -49,6 +49,7 @@ export -f PrintUserChoiceQuestion
 PrintDirectoryContent(){ # NOT USED AT THE MOMENT! MIGHT BE USEFUL IN THE FUTURE
     # $1 = DIRS | FILES
     # $2 = Base Directory
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Listing contents of directory '$2/'..."
     DirectoryContent=()
     for FoundItem in "$2/"*; do
         FoundItemBaseName=$(basename $FoundItem)
