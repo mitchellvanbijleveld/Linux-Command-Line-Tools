@@ -122,14 +122,7 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SC
 ####################################################################################################
 ####################################################################################################
 
-# Check Debug
-for BinArgument in $(echo $@ | tr '[:lower:]' '[:upper:]'); do
-    PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking argument $BinArgument"
-    case $BinArgument in
-    "--DEBUG") PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "DEBUG should already be enabled...";;
-    *) PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Ignoring '$BinArgument'...";;
-    esac
-done
+
 
 
 
@@ -161,7 +154,12 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
 # SET VAR_UTILITY_SCRIPT_FILE_PATH
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT has a value..."
     if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
-        die_UtilityScriptNotFound "No script specified!"
+        PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT has no value. Checking VAR_UTILITY again..."
+        case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
+            "HELP") PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."; exit 0;;
+            "INTERACTIVESHELL") "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh";;
+            *) die_UtilityScriptNotFound "No script specified!";;
+        esac
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_FILE_PATH..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
