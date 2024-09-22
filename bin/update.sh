@@ -5,7 +5,7 @@ VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo git"
 
 
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Updating..."
-PrintMessage "INFO"
+PrintMessage
 git -C "$VAR_BIN_INSTALL_DIR" pull
-PrintMessage "INFO"
+PrintMessage
 PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Done"
