@@ -137,6 +137,7 @@ done
 ####################################################################################################
 # PRE START CHECKS
 ####################################################################################################
+# SET VAR_UTILITY_FOLDER_PATH
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY has a value..."
     if [[ "$VAR_UTILITY" == "" ]]; then
         #die_UtilityNotFound "No utility specified!"
@@ -157,21 +158,44 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
     fi
 
 
-
+# SET VAR_UTILITY_SCRIPT_FILE_PATH
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT has a value..."
     if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
         die_UtilityScriptNotFound "No script specified!"
     fi
-PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_REAL_PATH..."
-    VAR_UTILITY_SCRIPT_REAL_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
-PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT_REAL_PATH is an existing file..."
-    if ! [[ -f $VAR_UTILITY_SCRIPT_REAL_PATH ]]; then
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_FILE_PATH..."
+    VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
+PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT_FILE_PATH is an existing file..."
+    if ! [[ -f $VAR_UTILITY_SCRIPT_FILE_PATH ]]; then
         die_UtilityScriptNotFound "The '$VAR_UTILITY_SCRIPT' script was not found within the '$VAR_UTILITY' utility!"
     fi
+
+# DEPENDENCY CHECK
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_FILE_PATH'..."
+    EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_FILE_PATH"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
+    "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 ####################################################################################################
 # PRE START CHECKS
 ####################################################################################################
 ####################################################################################################
+
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# EXPORT VARIABLES
+####################################################################################################
+export VAR_UTILITY_SCRIPT_CONFIG_DIR=$(echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_CONFIG_DIR | sed 's/\//\\\//g')/; s/.sh$//")
+export VAR_UTILITY_SCRIPT_TEMP_DIR=$( echo $VAR_UTILITY_SCRIPT_FILE_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_TEMP_DIR | sed 's/\//\\\//g')/; s/.sh$//")
+####################################################################################################
+# EXPORT VARIABLES
+####################################################################################################
+####################################################################################################
+
 
 
 
@@ -180,7 +204,9 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
 # PRINT CONFIG PART TWO
 ####################################################################################################
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Folder Path         : '$VAR_UTILITY_FOLDER_PATH'"
-PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script File Path    : '$VAR_UTILITY_SCRIPT_REAL_PATH'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script File Path    : '$VAR_UTILITY_SCRIPT_FILE_PATH'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script Config Dir   : '$VAR_UTILITY_SCRIPT_CONFIG_DIR'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Script Temp Dir     : '$VAR_UTILITY_SCRIPT_TEMP_DIR'"
 ####################################################################################################
 # PRINT CONFIG PART TWO
 ####################################################################################################
@@ -190,21 +216,6 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Sc
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-export VAR_UTILITY_SCRIPT_CONFIG_DIR=$(echo $VAR_UTILITY_SCRIPT_REAL_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_CONFIG_DIR | sed 's/\//\\\//g')/; s/.sh$//")
-export VAR_UTILITY_SCRIPT_TEMP_DIR=$( echo $VAR_UTILITY_SCRIPT_REAL_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_TEMP_DIR | sed 's/\//\\\//g')/; s/.sh$//")
 
 
 # Making necessary directories
@@ -219,14 +230,8 @@ mkdir -p "$VAR_UTILITY_SCRIPT_TEMP_DIR"
 ####################################################################################################
 # MAIN SCRIPT
 ####################################################################################################
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_REAL_PATH'..."
-    EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_REAL_PATH"
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
-    "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
-
-
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script '$(ls $VAR_UTILITY_SCRIPT_REAL_PATH)' [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
-    "$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script '$(ls $VAR_UTILITY_SCRIPT_FILE_PATH)' [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
+    "$(which bash)" "$VAR_UTILITY_SCRIPT_FILE_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
 ####################################################################################################
 # MAIN SCRIPT
 ####################################################################################################
