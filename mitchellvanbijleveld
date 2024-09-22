@@ -204,10 +204,9 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Sc
 
 
 # Check Dependencies
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The utility script is located in '$VAR_UTILITY_SCRIPT_REAL_PATH'..."
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_REAL_PATH'..."
 EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_REAL_PATH"
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check script for '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
 "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 # Export vars usable by the script
