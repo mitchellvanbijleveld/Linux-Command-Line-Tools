@@ -145,11 +145,11 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual directory path for VAR_UTILITY_FOLDER_PATH..."
     if [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "HELP" ]]; then
-        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/Help" -iname "$VAR_UTILITY" -type d -print)
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/Help" -maxdepth 1 -iname "$VAR_UTILITY" -type d -print)
     elif [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "INTERACTIVESHELL" ]]; then
-        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/InteractiveShell" -iname "$VAR_UTILITY" -type d -print)
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR/InteractiveShell" -maxdepth 1 -iname "$VAR_UTILITY" -type d -print)
     else
-        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR" -path "$VAR_BIN_INSTALL_DIR/Help" -prune -o -path "$VAR_BIN_INSTALL_DIR/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
+        export VAR_UTILITY_FOLDER_PATH=$(find "$VAR_BIN_INSTALL_DIR" -maxdepth 1 -path "$VAR_BIN_INSTALL_DIR/Help" -prune -o -path "$VAR_BIN_INSTALL_DIR/InteractiveShell" -prune -o -iname "$VAR_UTILITY" -type d -print)
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_FOLDER_PATH is an existing directory..."
     if ! [[ -d $VAR_UTILITY_FOLDER_PATH ]]; then
@@ -203,17 +203,9 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Utility Sc
 
 
 
-# Check Dependencies
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_REAL_PATH'..."
-EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_REAL_PATH"
-PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
-"$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
+export VAR_UTILITY_SCRIPT_CONFIG_DIR=$(echo $VAR_UTILITY_SCRIPT_REAL_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_CONFIG_DIR | sed 's/\//\\\//g')/; s/.sh$//")
+export VAR_UTILITY_SCRIPT_TEMP_DIR=$( echo $VAR_UTILITY_SCRIPT_REAL_PATH | sed "s/$(echo $VAR_BIN_INSTALL_DIR | sed 's/\//\\\//g')/$(echo $VAR_BIN_TEMP_DIR | sed 's/\//\\\//g')/; s/.sh$//")
 
-# Export vars usable by the script
-EvalFromFile "VAR_UTILITY" "$VAR_UTILITY_SCRIPT_REAL_PATH"
-EvalFromFile "VAR_UTILITY_SCRIPT" "$VAR_UTILITY_SCRIPT_REAL_PATH"
-export VAR_UTILITY_SCRIPT_CONFIG_DIR="$VAR_BIN_CONFIG_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
-export VAR_UTILITY_SCRIPT_TEMP_DIR="$VAR_BIN_TEMP_DIR/$VAR_UTILITY/$VAR_UTILITY_SCRIPT"
 
 # Making necessary directories
 mkdir -p "$VAR_UTILITY_SCRIPT_CONFIG_DIR"
@@ -227,14 +219,14 @@ mkdir -p "$VAR_UTILITY_SCRIPT_TEMP_DIR"
 ####################################################################################################
 # MAIN SCRIPT
 ####################################################################################################
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from Utility Script '$VAR_UTILITY_SCRIPT_REAL_PATH'..."
+    EvalFromFile "VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" "$VAR_UTILITY_SCRIPT_REAL_PATH"
+PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting dependency check for dependencies '$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS'..."
+    "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/CheckDependencies.sh" "$VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS" || { exit 1; }
 
 
-
-
-
-# START THE UTILITY SCRIPT WITH THE GIVEN ARGUMENTS (IF ANY)
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script '$(ls $VAR_UTILITY_SCRIPT_REAL_PATH)' [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
-"$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
+    "$(which bash)" "$VAR_UTILITY_SCRIPT_REAL_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
 ####################################################################################################
 # MAIN SCRIPT
 ####################################################################################################
