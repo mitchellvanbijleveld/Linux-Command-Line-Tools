@@ -113,8 +113,8 @@ export -f AvailableChoices_Add
 
 StartUtilityScript() {
     ScriptArguments=$@
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting bin '$VAR_BIN_INSTALL_DIR/mitchellvanbijleveld'..."
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments '$ScriptArguments'..."
+    PrintMessage "DEBUG" "InteractiveShell/$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting bin '$VAR_BIN_INSTALL_DIR/mitchellvanbijleveld'..."
+    PrintMessage "DEBUG" "InteractiveShell/$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Starting Utility '$VAR_UTILITY' Script '$VAR_UTILITY_SCRIPT' with arguments '$ScriptArguments'..."
     "$VAR_BIN_INSTALL_DIR/mitchellvanbijleveld" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $@
 }
 export -f StartUtilityScript
