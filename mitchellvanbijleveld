@@ -132,7 +132,7 @@ if ! [[ $(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
 fi
 
 # Adjust the utility script real path with the find parameter.
-VAR_UTILITY_SCRIPT_REAL_PATH=$(find $VAR_UTILITY_FOLDER_PATH -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
+VAR_UTILITY_SCRIPT_REAL_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
 
 # Check Dependencies
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Fetching dependencies from utility script..."
