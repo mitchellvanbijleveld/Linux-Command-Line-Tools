@@ -37,7 +37,8 @@ case $(echo "$VAR_DAEMON_LIST_OPTION" | tr '[:lower:]' '[:upper:]') in
     for DaemonName in "$VAR_DAEMON_CONFIG_BASE_DIR"*; do
         if [[ -f "$DaemonName" ]]; then
             ShortDaemonName=$(basename $DaemonName)
-            PrintRowDaemon "$ShortDaemonName" "$(GetDaemonVersion $DaemonName)" "Installed"
+            EvalFromFile "VAR_DAEMON_VERSION" "$DaemonName"
+            PrintRowDaemon "$ShortDaemonName" "$VAR_DAEMON_VERSION" "Installed"
         fi
     done
     ;;
@@ -55,7 +56,8 @@ case $(echo "$VAR_DAEMON_LIST_OPTION" | tr '[:lower:]' '[:upper:]') in
     for DaemonName in "$VAR_DAEMON_EXAMPLE_BASE_DIR"*; do
         if [[ -f "$DaemonName" ]]; then
             ShortDaemonName=$(basename $DaemonName)
-            PrintRowDaemon "$ShortDaemonName" "$(GetDaemonVersion $DaemonName)" "Available"
+            EvalFromFile "VAR_DAEMON_VERSION" "$DaemonName"
+            PrintRowDaemon "$ShortDaemonName" "$VAR_DAEMON_VERSION" "Available"
         fi
     done
     ;;
