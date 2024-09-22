@@ -15,12 +15,6 @@ if [[ $VAR_UTILITY != "" ]] && [[ $VAR_UTILITY_SCRIPT != "" ]]; then
     VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//gi; s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
 fi
 
-PrintLogLine(){
-    echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-32s" "$echo_var_utility/$echo_var_utility_script")" "[$(printf "%5s" "$1")]" ":" "$2"
-}
-
-export -f PrintLogLine
-
 PrintMessage(){
     # $1 = Log Level
     # $2 = Utility
@@ -43,50 +37,7 @@ PrintMessage(){
         esac
     fi
 }
-
 export -f PrintMessage
-
-# Function echoDebug()
-# Prints messages if VAR_SCRIPT_DEBUG=true.
-echoDebug () {
-    echo_var_utility="$1"
-    echo_var_utility_script="$2"
-    echo_var_message="$3"
-    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
-        return 0 # stop function
-    elif [[ "$3" == "" ]]; then
-        echo_var_message="$1 $2"
-        echo_var_utility=""
-        echo_var_utility_script=""
-    fi
-    if [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
-        PrintLogLine "DEBUG" "$echo_var_message"
-    fi
-}
-
-export -f echoDebug
-
-# Function echoInfo()
-# Prints messages if VAR_SCRIPT_DEBUG=true.
-echoInfo () {
-    echo_var_utility="$1"
-    echo_var_utility_script="$2"
-    echo_var_message="$3"
-    if [[ "$1" == "" ]] && [[ "$2" == "" ]] && [[ "$3" == "" ]] && [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
-        return 0 # stop function
-    elif [[ "$3" == "" ]]; then
-        echo_var_message="$1 $2"
-        echo_var_utility=""
-        echo_var_utility_script=""
-    fi
-    if [[ $VAR_SCRIPT_DEBUG -eq 1 ]]; then
-        PrintLogLine "INFO" "$echo_var_message"
-    else
-        echo "$echo_var_message"
-    fi
-}
-
-export -f echoInfo
 
 if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space:]]|$) ]]; then
     export VAR_SCRIPT_DEBUG=1
@@ -100,8 +51,12 @@ if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space
 fi
 
 # Check Debug
-for BinArgument in $@; do
+for BinArgument in $(echo $@ | tr '[:lower:]' '[:upper:]'); do
     PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking argument $BinArgument"
+    case $BinArgument in
+    "--DEBUG") PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "DEBUG should already be enabled...";;
+    *) PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Ignoring '$BinArgument'...";;
+    esac
 done
 
 VAR_SCRIPT_REAL_PATH=$(realpath $0)
