@@ -106,21 +106,14 @@ CheckIfArgumentNeedsToDoSomething(){
     # $1 = Argument
     case $(echo $1 | tr '[:lower:]' '[:upper:]') in
         "--AUTO-UPDATE")
-        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Updating first..."
-        "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/update.sh"
-        ;;
-        *) PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Doing nothing...";;
+            PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Updating first..."
+            "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/update.sh"
+            ;;
+        *)
+            PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Doing nothing..."
+            ;;
     esac
 }
-
-CheckIfUtilityNeedsToRun(){
-    case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
-        "HELP") PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."; exit 0;;
-        "INTERACTIVESHELL") "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh";;
-        *) die_UtilityScriptNotFound "No script specified!";;
-    esac
-}
-
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -190,6 +183,23 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
         #die_UtilityNotFound "No utility specified!"
         "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh"
         exit 0
+    elif [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
+        #########################
+        case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
+            "HELP")
+                PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."
+                exit 0
+                ;;
+            "INTERACTIVESHELL")
+                PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Interactive Shell..."
+                "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh"
+                exit 0
+                ;;
+            *)
+                PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "No need to start the utility right away..."
+                ;;
+        esac
+        #########################
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual directory path for VAR_UTILITY_FOLDER_PATH..."
     if [[ $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') == "HELP" ]]; then
@@ -208,8 +218,7 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
 # SET VAR_UTILITY_SCRIPT_FILE_PATH
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT has a value..."
     if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
-        PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT has no value. Checking VAR_UTILITY again..."
-        CheckIfUtilityNeedsToRun
+        die_UtilityScriptNotFound "No script specified!"
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_FILE_PATH..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
