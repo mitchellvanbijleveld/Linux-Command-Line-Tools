@@ -1,6 +1,7 @@
 #!/bin/bash
 SELF_VAR_UTILITY="mitchell"
 SELF_VAR_UTILITY_SCRIPT="vanbijleveld"
+SELF_VAR_BIN_FLAGS="--DEBUG --AUTO-UPDATE"
 
 ####################################################################################################
 ####################################################################################################
@@ -15,7 +16,11 @@ VAR_BIN_ARGUMENTS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//"
 export VAR_UTILITY=$(echo "$VAR_BIN_ARGUMENTS" | awk '{print $1}')
 export VAR_UTILITY_SCRIPT=$(echo "$VAR_BIN_ARGUMENTS" | awk '{print $2}')
 if [[ $VAR_UTILITY != "" ]] && [[ $VAR_UTILITY_SCRIPT != "" ]]; then
-    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$@" | sed "s/--DEBUG//gi; s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
+    VAR_UTILITY_SCRIPT_ARGUMENTS=$@
+    for BIN_ARGUMENT in $SELF_VAR_BIN_FLAGS; do
+        VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$VAR_UTILITY_SCRIPT_ARGUMENTS" | sed "s/$BIN_ARGUMENT//gi")
+    done
+    VAR_UTILITY_SCRIPT_ARGUMENTS=$(echo "$VAR_UTILITY_SCRIPT_ARGUMENTS" | sed "s/$VAR_UTILITY//i; s/$VAR_UTILITY_SCRIPT//i; s/^ *//; s/  */ /g; s/ *$//")
 fi
 
 if [[ $(echo $@ | tr '[:lower:]' '[:upper:]') =~ (^|[[:space:]])--DEBUG([[:space:]]|$) ]]; then
