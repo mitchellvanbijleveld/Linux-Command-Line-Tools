@@ -12,9 +12,9 @@ export VAR_BIN_CONFIG_DIR="/etc/mitchellvanbijleveld/Linux-Command-Line-Tools"
 export VAR_BIN_TEMP_DIR="/tmp/mitchellvanbijleveld/Linux-Command-Line-Tools"
 
 VAR_BIN_ARGUMENTS_STRING="$@"
-VAR_BIN_ARGUMENTS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
-export VAR_UTILITY=$(echo "$VAR_BIN_ARGUMENTS" | awk '{print $1}')
-export VAR_UTILITY_SCRIPT=$(echo "$VAR_BIN_ARGUMENTS" | awk '{print $2}')
+VAR_BIN_ARGUMENTS_WITHOUT_FLAGS=$(echo "$@" | sed "s/--[^ ]*//gi; s/^ *//; s/  */ /g; s/ *$//") # replace flags, leading spaces, more than two spaces, and trailing spaces
+export VAR_UTILITY=$(echo "$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS" | awk '{print $1}')
+export VAR_UTILITY_SCRIPT=$(echo "$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS" | awk '{print $2}')
 if [[ $VAR_UTILITY != "" ]] && [[ $VAR_UTILITY_SCRIPT != "" ]]; then
     VAR_UTILITY_SCRIPT_ARGUMENTS="$@ "
     for BIN_ARGUMENT in $SELF_VAR_BIN_FLAGS; do
@@ -51,7 +51,7 @@ PrintMessage(){
         esac
     elif [[ "$1" != "" ]] && [[ "$2" != "" ]] && [[ "$3" != "" ]] && [[ "$4" != "" ]]; then ### IF ALL ARGUMENTS HAVE A VALUE
         case $VAR_SCRIPT_DEBUG in
-            1) echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-38s" "$2/$3")" "[$(printf "%6s" "$1")]" ":" "$4"; return 0;;
+            1) echo $(date +"%Y-%m-%d %H:%M:%S") "$(printf "%-38s" "$2/$3")" "[$(printf "%8s" "$1")]" ":" "$4"; return 0;;
             *) 
                 case $1 in
                     "DEBUG" | "CONFIG" | "PRERUN") return 0;;
@@ -109,6 +109,7 @@ die_UtilityScriptNotFound (){
 
 
 
+
 ####################################################################################################
 ####################################################################################################
 # PRINT CONFIG PART ONE
@@ -117,13 +118,36 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN INSTAL
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN CONFIGURATION DIRECTORY : $VAR_BIN_CONFIG_DIR"
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN TEMPORARY DIRECTORY     : $VAR_BIN_TEMP_DIR"
 
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN POSSIBLE FLAGS          : '$SELF_VAR_BIN_FLAGS'"
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN ARGUMENT LIST STRING    : '$VAR_BIN_ARGUMENTS_STRING'"
-PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN ARGUMENTS WITHOUT FLAGS : '$VAR_BIN_ARGUMENTS'"
+PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "BIN ARGUMENTS WITHOUT FLAGS : '$VAR_BIN_ARGUMENTS_WITHOUT_FLAGS'"
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY                     : '$VAR_UTILITY'"
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SCRIPT              : '$VAR_UTILITY_SCRIPT'"
 PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SCRIPT ARGUMENTS    : '$VAR_UTILITY_SCRIPT_ARGUMENTS'"
 ####################################################################################################
 # PRINT CONFIG PART ONE
+####################################################################################################
+####################################################################################################
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+# PROCESS ARGUMENT FLAGS
+####################################################################################################
+PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument List..."
+for BinArgument in $VAR_BIN_ARGUMENTS_STRING; do
+    PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument '$BinArgument'..."
+    if [[ $SELF_VAR_BIN_FLAGS == *"$(echo $BinArgument | tr '[:lower:]' '[:upper:]')"* ]]; then
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Found '$BinArgument' in SELF_VAR_BIN_FLAGS..."
+    else
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Ignoring '$BinArgument'... Not in SELF_VAR_BIN_FLAGS..."
+    fi
+done
+####################################################################################################
+# PROCESS ARGUMENT FLAGS
 ####################################################################################################
 ####################################################################################################
 
