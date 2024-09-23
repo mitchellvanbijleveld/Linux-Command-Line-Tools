@@ -101,6 +101,26 @@ die_UtilityScriptNotFound (){
     done
     exit 1
 }
+
+CheckIfArgumentNeedsToDoSomething(){
+    # $1 = Argument
+    case $(echo $1 | tr '[:lower:]' '[:upper:]') in
+        "--AUTO-UPDATE")
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Updating first..."
+        "$(which bash)" "$VAR_BIN_INSTALL_DIR/bin/update.sh"
+        ;;
+        *) PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Doing nothing...";;
+    esac
+}
+
+CheckIfUtilityNeedsToRun(){
+    case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
+        "HELP") PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."; exit 0;;
+        "INTERACTIVESHELL") "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh";;
+        *) die_UtilityScriptNotFound "No script specified!";;
+    esac
+}
+
 ####################################################################################################
 # FUNCTIONS
 ####################################################################################################
@@ -140,8 +160,13 @@ PrintMessage "CONFIG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "UTILITY SC
 PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument List..."
 for BinArgument in $VAR_BIN_ARGUMENTS_STRING; do
     PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Processing Argument '$BinArgument'..."
+    if [[ $BinArgument != "--"* ]]; then
+        PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Argument '$BinArgument' is not a --flag..."
+        continue
+    fi
     if [[ $SELF_VAR_BIN_FLAGS == *"$(echo $BinArgument | tr '[:lower:]' '[:upper:]')"* ]]; then
         PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Found '$BinArgument' in SELF_VAR_BIN_FLAGS..."
+        CheckIfArgumentNeedsToDoSomething $BinArgument
     else
         PrintMessage "ARGUMENT" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Ignoring '$BinArgument'... Not in SELF_VAR_BIN_FLAGS..."
     fi
@@ -184,11 +209,7 @@ PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking i
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Checking if VAR_UTILITY_SCRIPT has a value..."
     if [[ "$VAR_UTILITY_SCRIPT" == "" ]]; then
         PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT has no value. Checking VAR_UTILITY again..."
-        case $(echo $VAR_UTILITY | tr '[:lower:]' '[:upper:]') in
-            "HELP") PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "HELP IS REQUESTED..."; exit 0;;
-            "INTERACTIVESHELL") "$(which bash)" "$VAR_BIN_INSTALL_DIR/InteractiveShell/Start.sh";;
-            *) die_UtilityScriptNotFound "No script specified!";;
-        esac
+        CheckIfUtilityNeedsToRun
     fi
 PrintMessage "PRERUN" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Using the 'find' command to set the actual VAR_UTILITY_SCRIPT_FILE_PATH..."
     VAR_UTILITY_SCRIPT_FILE_PATH=$(find $VAR_UTILITY_FOLDER_PATH -maxdepth 1 -iname "$VAR_UTILITY_SCRIPT.sh" -type f)
