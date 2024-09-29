@@ -436,12 +436,12 @@ PrintStatistics_Comparison_PerDate(){
         elif [[ $VAR_DATE_REPAIR_FAIL -eq 1 ]]; then
             PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  REPAIR NOT OK"
         fi
-    fi
-
-    if [[ $VAR_FAIL_DATE -eq 1 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
-    elif [[ $VAR_FAIL_DATE -eq 0 ]]; then
-        PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+    else
+        if [[ $VAR_FAIL_DATE -eq 1 ]]; then
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  NOT OK"
+        elif [[ $VAR_FAIL_DATE -eq 0 ]]; then
+            PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  OK"
+        fi
     fi
 
     PrintMessage
