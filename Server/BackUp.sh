@@ -73,12 +73,21 @@ CreateBackUp(){
     # $3 = final file path
 
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 5 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 4 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 3 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 2 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Creating back-up for '$1' in 1 second..."
+    sleep 1
 
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
-    #sleep 5
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Started creating back-up for '$1'..."
 
     if [ $VAR_SCRIPT_VERBOSE -eq 1 ]; then
         echo 'verbose'
@@ -104,12 +113,21 @@ MoveBackUp(){
     # $3 = final file path
 
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 5 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 4 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 3 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 2 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Moving back-up for '$1' in 1 second..."
+    sleep 1
 
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
-    #sleep 5
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Started moving back-up for '$1'..."
 
     "$(which cp)" "$2" "$3"
 
@@ -140,12 +158,21 @@ RemoveOldBackUps(){
     # $3 = final file path
 
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 5 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 4 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 3 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 2 seconds..."
+    sleep 1
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Removing old back-up(s) for '$1' in 1 second1..."
+    sleep 1
 
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Directory to backup         - $1"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Temporary File Path         - $2"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "    Final Destination File Path - $3"
     
-    #sleep 5
+    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Started removing old back-up(s) for '$1'..."
 
     while [ $(tree "$VAR_BACKUP_FINAL_DIR$1" | grep -c "$VAR_BACKUP_FILE_TYPE") -gt $VAR_BACKUP_MAX_BACKUPS ];do
         for var_directory in "$VAR_BACKUP_FINAL_DIR$1"/*; do
