@@ -180,7 +180,7 @@ while IFS= read -r var_directory_line; do
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Processing Line : $var_directory_line"
 
     # Use sed to remove any leading spaces or other unwanted characters
-    var_backup_directory=$(echo "$var_directory_line" | sed "s/\"//g; s/\'//g")
+    var_backup_directory=$(echo "$var_directory_line" | sed "s/\"//g; s/\'//g; s/ *$//")
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "BackUp Dir : $var_backup_directory"
 
     if ! [ -d "$var_backup_directory" ]; then
