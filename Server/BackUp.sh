@@ -13,7 +13,20 @@ fi
 
 VAR_SCRIPT_CONFIG_FILE="$VAR_UTILITY_SCRIPT_CONFIG_DIR/directories"
 VAR_BACKUP_FINAL_DIR="$VAR_UTILITY_SCRIPT_CONFIG_DIR/destination"
-VAR_BACKUP_MAX_BACKUPS=4
+
+
+
+# SET CONFIG MAX_BACKUPS
+VAR_CONFIG_FILE_MAX_BACKUPS="$VAR_UTILITY_SCRIPT_CONFIG_DIR/max_backups"
+if ! [ -f "$VAR_CONFIG_FILE_MAX_BACKUPS" ]; then
+    VAR_CONFIG_MAX_BACKUPS=$(cat "$VAR_CONFIG_FILE_MAX_BACKUPS")
+else
+    VAR_CONFIG_MAX_BACKUPS=3
+fi
+# SET CONFIG MAX_BACKUPS
+
+
+
 #VAR_BACKUP_MAX_HASH_CHECKS=60
 VAR_BACKUP_FILE_TYPE="tar.zst"
 
@@ -33,7 +46,7 @@ else
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Loading default configuration:"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_UTILITY_SCRIPT_TEMP_DIR : $VAR_UTILITY_SCRIPT_TEMP_DIR"
     PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_FINAL_DIR        : $VAR_BACKUP_FINAL_DIR"
-    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_BACKUPS      : $VAR_BACKUP_MAX_BACKUPS"
+    PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_CONFIG_MAX_BACKUPS      : $VAR_CONFIG_MAX_BACKUPS"
     #PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "VAR_BACKUP_MAX_HASH_CHECKS : $VAR_BACKUP_MAX_HASH_CHECKS"
 fi
 
@@ -169,7 +182,7 @@ RemoveOldBackUps(){
     
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "  - Started removing old back-up(s) for '$1'..."
 
-    while [ $(tree "$VAR_BACKUP_FINAL_DIR$1" | grep -c "$VAR_BACKUP_FILE_TYPE") -gt $VAR_BACKUP_MAX_BACKUPS ];do
+    while [ $(tree "$VAR_BACKUP_FINAL_DIR$1" | grep -c "$VAR_BACKUP_FILE_TYPE") -gt $VAR_CONFIG_MAX_BACKUPS ];do
         for var_directory in "$VAR_BACKUP_FINAL_DIR$1"/*; do
             for var_file in "$var_directory"/*; do
                 if [ $(tree "$var_directory" | grep -c "$VAR_BACKUP_FILE_TYPE") == 0 ]; then
