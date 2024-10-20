@@ -3,17 +3,12 @@ VAR_UTILITY="Server"
 VAR_UTILITY_SCRIPT="BackUp"
 VAR_UTILITY_SCRIPT_VERSION="2024.XX.XX-XXXX"
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="cp echo PrintMessage sha512sum sleep tar tree" # msmtp
+VAR_NEED_ROOT=1
 
 if [[ "$@" == *"--verbose"* ]]; then
     VAR_SCRIPT_VERBOSE=1
 else
     VAR_SCRIPT_VERBOSE=0
-fi
-
-if [[ $(whoami) != "root" ]]; then
-    PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Only the 'root' user should execute this backup utility script. Exiting..."
-    PrintMessage
-    exit 1
 fi
 
 VAR_SCRIPT_CONFIG_FILE="$VAR_UTILITY_SCRIPT_CONFIG_DIR/directories"
