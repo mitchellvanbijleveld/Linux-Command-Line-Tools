@@ -6,7 +6,7 @@ fi
 echo
 echo "Available choices:"; AvailableChoices_Reset
 if [[ ${#DirectoryContent[@]} -gt 0 ]]; then
-    AvailableChoices_Add "1-${#DirectoryContent[@]}" "Daemon to install"
+    AvailableChoices_Add "1-${#DirectoryContent[@]}" "Daemon to stop"
 fi
 AvailableChoices_Add "B" "Back"
 AvailableChoices_Add "Q" "Quit Interactive Shell"
