@@ -288,9 +288,9 @@ mkdir -p "$VAR_UTILITY_SCRIPT_TEMP_DIR"
 # MAIN SCRIPT
 ####################################################################################################
 PrintMessage "DEBUG" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "Starting Utility Script '$(ls $VAR_UTILITY_SCRIPT_FILE_PATH)' [$VAR_UTILITY_SCRIPT_ARGUMENTS]..."
-if [[ $(EvalFromFile "VAR_NEED_ROOT" "$VAR_UTILITY_SCRIPT_FILE_PATH"; echo $VAR_NEED_ROOT) ]]; then
-    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "You need to run this utility script as root. Asking for password if necessary..."
-    "$(which sudo)" "$(which bash)" "$VAR_UTILITY_SCRIPT_FILE_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
+if [[ $(EvalFromFile "VAR_NEED_ROOT" "$VAR_UTILITY_SCRIPT_FILE_PATH"; echo $VAR_NEED_ROOT) ]] && [[ $(whoami) != "root" ]]; then
+    PrintMessage "INFO" "$SELF_VAR_UTILITY" "$SELF_VAR_UTILITY_SCRIPT" "The root user is requested. Doing restart of bin as root..."
+    "$(which sudo)" "$VAR_BIN_INSTALL_DIR/mitchellvanbijleveld" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $VAR_BIN_ARGUMENTS_STRING
 else
     "$(which bash)" "$VAR_UTILITY_SCRIPT_FILE_PATH" $VAR_UTILITY_SCRIPT_ARGUMENTS
 fi
