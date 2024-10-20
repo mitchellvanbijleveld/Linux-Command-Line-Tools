@@ -24,6 +24,9 @@ GetDaemonVersion(){
 }
 
 PrintRowDaemon(){
+    # $1 Daemon Name
+    # $2 Daemon Version
+    # $3 Daemon State
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "$(printf "%-20s" "$1") | $(printf "%-15s" "$2") | $3"
 }
 
@@ -37,8 +40,17 @@ case $(echo "$VAR_DAEMON_LIST_OPTION" | tr '[:lower:]' '[:upper:]') in
     for DaemonName in "$VAR_DAEMON_CONFIG_BASE_DIR"*; do
         if [[ -f "$DaemonName" ]]; then
             ShortDaemonName=$(basename $DaemonName)
-            EvalFromFile "VAR_DAEMON_VERSION" "$DaemonName"
-            PrintRowDaemon "$ShortDaemonName" "$VAR_DAEMON_VERSION" "Installed"
+            InstalledDaemonVersion=$(EvalFromFile "VAR_DAEMON_VERSION" "$DaemonName"; echo $VAR_DAEMON_VERSION)
+            if [[ -f "$VAR_DAEMON_EXAMPLE_BASE_DIR/$ShortDaemonName" ]]; then
+                ExampleDaemonVersion=$(EvalFromFile "VAR_DAEMON_VERSION" "$VAR_DAEMON_EXAMPLE_BASE_DIR/$ShortDaemonName"; echo $VAR_DAEMON_VERSION)
+            fi
+            if [[ $ExampleDaemonVersion > $InstalledDaemonVersion ]]; then
+                PrintRowDaemon "$ShortDaemonName" "$InstalledDaemonVersion" "Installed / UPDATE AVAILABLE ($ExampleDaemonVersion)"
+            else
+                PrintRowDaemon "$ShortDaemonName" "$InstalledDaemonVersion" "Installed"
+            fi
+
+
         fi
     done
     ;;
