@@ -1,6 +1,6 @@
 #!/bin/bash
 VAR_UTILITY="Daemon"
-VAR_UTILITY_SCRIPT="Install"
+VAR_UTILITY_SCRIPT="Uninstall"
 VAR_UTILITY_SCRIPT_VERSION="2024.09.09-2048"
 VAR_SCRIPT_REQUIRED_COMMAND_LINE_TOOLS="echo PrintMessage rm sed"
 VAR_NEED_ROOT=1
@@ -18,7 +18,7 @@ fi
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $VAR_DAEMON_CONFIG_FILE
 PrintMessage "DEBUG" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" $VAR_DAEMON_EXAMPLE_FILE
 
-if [[ ! -f "$VAR_DAEMON_CONFIG_FILE" ]] && [[ $@ != *"--replace"* ]]; then
+if [[ ! -f "$VAR_DAEMON_CONFIG_FILE" ]]; then
     PrintMessage "INFO" "$VAR_UTILITY" "$VAR_UTILITY_SCRIPT" "Daemon '$VAR_DAEMON_NAME' not installed. Exiting..."
     exit 1
 fi
